@@ -1,0 +1,75 @@
+{% extends 'QA_project/base.html' %}
+
+{% block content %}
+    <div class="card mb-3">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-2">
+                    <div style="height: 100px;" class="border mb-2 w-100">
+                        <img src="/static/images/avatar.jpg" alt="img" class="img-fluid">
+                    </div>
+                    <div>
+                        <input type="number" class="form-control" value="{{ question.rating }}">
+                    </div>
+                </div>
+                <div class="col d-flex flex-column justify-content-between">
+                    <div>
+                        <h5 class="card-title">{{ question.title }}</h5>
+                        <p class="card-text">{{ question.text }}</p>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <span>Tags:</span>
+                            {% for tag in question.tags.all %}
+                                <span class="badge rounded-pill text-bg-primary">{{ tag.name }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h2>Answers</h2>
+    {% for answer in answers %}
+        <div class="card mb-3">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-2">
+                        <div style="height: 100px;" class="border mb-2 w-100">
+                            <img src="/static/images/avatar.jpg" alt="img" class="img-fluid">
+                        </div>
+                        <div>
+                            <input type="number" class="form-control" value="{{ answer.rating }}">
+                        </div>
+                    </div>
+                    <div class="col d-flex flex-column justify-content-between">
+                        <div>
+                            <p class="card-text">{{ answer.text }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+
+    <nav aria-label="Page navigation example">
+        <ul class="pagination">
+            <li class="page-item"><a class="page-link" href="#">Previous</a></li>
+            <li class="page-item"><a class="page-link" href="#">1</a></li>
+            <li class="page-item"><a class="page-link" href="#">2</a></li>
+            <li class="page-item"><a class="page-link" href="#">3</a></li>
+            <li class="page-item"><a class="page-link" href="#">Next</a></li>
+        </ul>
+    </nav>
+
+    {% if user.is_authenticated %}
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <textarea class="form-control" name="text" rows="3" placeholder="Your answer"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    {% endif %}
+{% endblock %}
