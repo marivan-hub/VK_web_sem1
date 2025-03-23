@@ -15,3 +15,6 @@ def signup(request):
 
 def question(request):
     return render(request,"../templates/QA_project/question.html")
+
+def settings(request):
+    return render(request,"../templates/QA_project/settings.html")
