@@ -1,0 +1,171 @@
+{% extends 'QA_project/base.html' %}
+{% load static %}
+{% block content %}
+    <div class="d-flex align-items-center gap-2 mb-4">
+        <h1>New Questions</h1>
+        <a href="#">Hot Questions</a>
+    </div>
+
+    <div class="d-flex gap-3 flex-column">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-2">
+                                    <div style="height: 100px;" class="border mb-2 w-100">
+                                        <img src="#" alt="img" class="img-fluid">
+                                    </div>
+                                    <div>
+                                        <input type="number" class="form-control" value="5">
+                                    </div>
+                                </div>
+                                <div class="col d-flex flex-column justify-content-between">
+                                    <div>
+                                        <h5 class="card-title">Special title treatment</h5>
+                                        <p class="card-text">With supporting text below as a natural lead-in to
+                                            additional
+                                            content.
+                                        </p>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col">
+                                            <a href="#">Answers (3)</a>
+                                        </div>
+                                        <div class="col">
+                                            <span>Tags:</span>
+                                            <span class="badge rounded-pill text-bg-primary">Primary</span>
+                                            <span class="badge rounded-pill text-bg-secondary">Secondary</span>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-2">
+                                    <div style="height: 100px;" class="border mb-2 w-100">
+                                        <img src="#" alt="img" class="img-fluid">
+                                    </div>
+                                    <div>
+                                        <input type="number" class="form-control" value="5">
+                                    </div>
+                                </div>
+                                <div class="col d-flex flex-column justify-content-between">
+                                    <div>
+                                        <h5 class="card-title">Special title treatment</h5>
+                                        <p class="card-text">With supporting text below as a natural lead-in to
+                                            additional
+                                            content.
+                                        </p>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col">
+                                            <a href="#">Answers (3)</a>
+                                        </div>
+                                        <div class="col">
+                                            <span>Tags:</span>
+                                            <span class="badge rounded-pill text-bg-primary">Primary</span>
+                                            <span class="badge rounded-pill text-bg-secondary">Secondary</span>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-2">
+                                    <div style="height: 100px;" class="border mb-2 w-100">
+                                        <img src="#" alt="img" class="img-fluid">
+                                    </div>
+                                    <div>
+                                        <input type="number" class="form-control" value="5">
+                                    </div>
+                                </div>
+                                <div class="col d-flex flex-column justify-content-between">
+                                    <div>
+                                        <h5 class="card-title">Special title treatment</h5>
+                                        <p class="card-text">With supporting text below as a natural lead-in to
+                                            additional
+                                            content.
+                                        </p>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col">
+                                            <a href="#">Answers (3)</a>
+                                        </div>
+                                        <div class="col">
+                                            <span>Tags:</span>
+                                            <span class="badge rounded-pill text-bg-primary">Primary</span>
+                                            <span class="badge rounded-pill text-bg-secondary">Secondary</span>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-2">
+                                    <div style="height: 100px;" class="border mb-2 w-100">
+                                        <img src="#" alt="img" class="img-fluid">
+                                    </div>
+                                    <div>
+                                        <input type="number" class="form-control" value="5">
+                                    </div>
+                                </div>
+                                <div class="col d-flex flex-column justify-content-between">
+                                    <div>
+                                        <h5 class="card-title">Special title treatment</h5>
+                                        <p class="card-text">With supporting text below as a natural lead-in to
+                                            additional
+                                            content.
+                                        </p>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col">
+                                            <a href="#">Answers (3)</a>
+                                        </div>
+                                        <div class="col">
+                                            <span>Tags:</span>
+                                            <span class="badge rounded-pill text-bg-primary">Primary</span>
+                                            <span class="badge rounded-pill text-bg-secondary">Secondary</span>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+    </div>
+{% endblock %}
+
+{% block navbar %}
+    <nav class="navbar navbar-expand-lg navbar-light" style="background-color: #d9abdb;">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <img src="{% static 'resources/pictures/icon.jpeg' %}" alt="" width="30" height="24" class="d-inline-block align-text-top">
+                Questioneer
+            </a>
+
+            <form class="d-flex" role="search">
+                <input class="form-control me-2" type="search" placeholder="Enter keywords" aria-label="Search">
+                <button class="btn btn-outline-success" type="submit">Search</button>
+            </form>
+            
+            <button class="btn btn-outline-primary" type="submit">Ask question</button>
+            
+            <div class="d-flex gap-2">
+                <a href="{% url 'login' %}" class="btn btn-outline-secondary">Log in</a>
+                <a href="{% url 'register' %}" class="btn btn-primary">Register</a>
+            </div>
+        </div>
+    </nav>
+{% endblock %}

@@ -16,7 +16,7 @@
     <nav class="navbar navbar-expand-lg navbar-light" style="background-color: #d9abdb;">
         <div class="container">
             <a class="navbar-brand" href="/">
-                <img src="{% static 'resources/pictures/icon.jpeg' %}" alt="" width="30" height="24" class="d-inline-block align-text-top">
+                <img src="{% static 'resources/pictures/icon.jpeg' %}" alt="little_icon" width="30" height="24" class="d-inline-block align-text-top">
                 Questioneer
             </a>
 
@@ -30,7 +30,7 @@
                     <img src="{% static 'resources/pictures/avatar.jpeg' %}" class="img-thumbnail" alt="..." width="80" height="80">
                 </div>
                 <div class="content">
-                    <div class="content__name">Dr. Pepper</div>
+                    <div class="content__name">Mar Ivan</div>
                     <div class="content__links">
                         <a href="/settings">Settings</a>
                         <a href="/index_logout">Log out</a>
@@ -40,42 +40,39 @@
         </div>
     </nav>
 
-    <main class="container mt-2">
+    <main class="container mt-3">
         <div class="row">
-            <section class="col-md-8">
+            <section class="col-lg-9 col-md-8">
                 {% block content %}
                 {% endblock %}
             </section>
 
-            <aside class="col-md-4">
-                <section class="mb-3">
-                    <h3>Popular tags</h3>
-                    <div>
-                        <span class="badge rounded-pill text-bg-primary">perl</span>
-                        <span class="badge rounded-pill text-bg-secondary">python</span>
-                        <span class="badge rounded-pill text-bg-success">TechnoPark</span>
-                        <span class="badge rounded-pill text-bg-danger">MySQL</span>
-                        <span class="badge rounded-pill text-bg-warning">django</span>
-                        <span class="badge rounded-pill text-bg-info">Mail.Ru</span>
-                        <span class="badge rounded-pill text-bg-light">Voloshin</span>
-                        <span class="badge rounded-pill text-bg-dark">Firefox</span>
-                    </div>
-                </section>
+            <aside class="col-lg-3 col-md-4">
+                <div class="sticky-top" style="top: 20px;">
+                    <section class="card mb-4">
+                        <div class="card-body">
+                            <h5 class="card-title">Popular Tags</h5>
+                            <div class="d-flex flex-wrap gap-2">
+                                <span class="badge bg-primary">perl</span>
+                                <span class="badge bg-success">python</span>
+                                <span class="badge bg-info">TechnoPark</span>
+                            </div>
+                        </div>
+                    </section>
 
-                <section>
-                    <h3>Best members</h3>
-                    <div>
-                        <a class="d-block" href="#">Mr. Freeman</a>
-                        <a class="d-block" href="#">Dr. House</a>
-                        <a class="d-block" href="#">Bender</a>
-                        <a class="d-block" href="#">Queen Victoria</a>
-                        <a class="d-block" href="#">V. Pupkin</a>
-                    </div>
-                </section>
+                    <section class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Best Members</h5>
+                            <div class="list-group list-group-flush">
+                                <a href="#" class="list-group-item">Ivanov Ivan</a>
+                                <a href="#" class="list-group-item">Petrov Petr</a>
+                            </div>
+                        </div>
+                    </section>
+                </div>
             </aside>
         </div>
     </main>
-
     <script src="{% static 'bootstrap/bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js' %}"></script>
 </body>
 

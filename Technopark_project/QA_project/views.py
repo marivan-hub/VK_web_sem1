@@ -18,3 +18,6 @@ def question(request):
 
 def settings(request):
     return render(request,"../templates/QA_project/settings.html")
+
+def index_logout(request):
+    return render(request,"../templates/QA_project/index_logout.html")
