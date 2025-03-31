@@ -24,16 +24,16 @@
                 <input class="form-control me-2" type="search" placeholder="Enter keywords" aria-label="Search">
                 <button class="btn btn-outline-success" type="submit">Search</button>
             </form>
-            <a href ="/ask"><button class="btn btn-outline-primary" type="submit" >Ask question</button></a>
+
             <div class="d-flex gap-2 align-items-center">
-                <div>
-                    <img src="{% static 'resources/pictures/avatar.jpeg' %}" class="img-thumbnail" alt="..." width="80" height="80">
-                </div>
                 <div class="content">
-                    <div class="content__name">Mar Ivan</div>
                     <div class="content__links">
-                        <a href="/settings">Settings</a>
-                        <a href="/index_logout">Log out</a>
+                    <div class="col">
+                        <a href="/login">Log in</a>
+                    </div>
+                    <div class="col">
+                        <a href="/signup">Signup</a>
+                    </div>
                     </div>
                 </div>
             </div>

@@ -21,3 +21,6 @@ def settings(request):
 
 def index_logout(request):
     return render(request,"../templates/QA_project/index_logout.html")
+
+def tag(request):
+    return render(request,"../templates/QA_project/tag.html")
