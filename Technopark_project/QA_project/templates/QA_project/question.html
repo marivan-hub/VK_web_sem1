@@ -12,14 +12,12 @@
         {% include 'QA_project/answer_card.html' %}
     {% endfor %}
 
-    {% if user.is_authenticated %}
     <div class="card mt-4">
         <div class="card-header">
             <h4>Your Answer</h4>
         </div>
         <div class="card-body">
             <form method="post">
-                {% csrf_token %}
                 <div class="form-group mb-3">
                     <textarea class="form-control" name="text" rows="5"
                               placeholder="Write your answer here..." required></textarea>
@@ -28,7 +26,6 @@
             </form>
         </div>
     </div>
-    {% endif %}
 
     {% include 'QA_project/pagination.html' with page=answers %}
 {% endblock %}

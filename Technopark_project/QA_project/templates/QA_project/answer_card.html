@@ -27,19 +27,19 @@
                                 Answered by {{ answer.author.name }} • {{ answer.created_at }} ago
                             </span>
                         </div>
-                        {% if user.is_authenticated and user == question.author %}
                         <div class="col-auto">
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox"
                                        id="correctAnswer{{ answer.id }}"
-                                       {% if answer.is_correct %}checked{% endif %}
+                                       {% if answer.is_correct %}
+                                       checked
+                                       {% endif %}
                                        onchange="markAsCorrect({{ answer.id }})">
                                 <label class="form-check-label" for="correctAnswer{{ answer.id }}">
                                     Correct answer
                                 </label>
                             </div>
                         </div>
-                        {% endif %}
                     </div>
                 </div>
             </div>

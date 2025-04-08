@@ -8,7 +8,7 @@
         <label for="username">Username</label>
         <input type="text" class="form-control" id="username" name="username"
                placeholder="Enter username" required>
-        <div id="username-error" class="invalid-feedback" style="display: none;">
+        <div class="invalid-feedback">
             Демонстрация сообщения об ошибке, попробуйте "username"
         </div>
     </div>
@@ -17,8 +17,7 @@
         <input type="password" class="form-control" id="password" name="password"
                placeholder="Enter password" required>
     </div>
-    <button type="button" onclick="validateAndRedirect()"
-            class="btn btn-primary btn-block mt-4">
+    <button type="button" id="login-btn" class="btn btn-primary btn-block mt-4">
         Login
     </button>
 </form>
@@ -30,16 +29,19 @@
 
 {% block scripts %}
 <script>
-    function validateAndRedirect() {
-        const username = document.getElementById('username').value;
-        const errorElement = document.getElementById('username-error');
+    document.addEventListener('DOMContentLoaded', function() {
+        const usernameField = document.getElementById('username');
+        const loginBtn = document.getElementById('login-btn');
 
-        if (username.toLowerCase() === 'username') {
-            errorElement.style.display = 'none';
-            window.location.href = "{% url 'index' %}";
-        } else {
-            errorElement.style.display = 'block';
-        }
-    }
+        loginBtn.addEventListener('click', function () {
+            const username = usernameField.value.trim();
+            if (username.toLowerCase() === 'username') {
+                usernameField.classList.remove('is-invalid');
+                window.location.href = "{% url 'index' %}";
+            } else {
+                usernameField.classList.add('is-invalid');
+            }
+        });
+    });
 </script>
 {% endblock %}
