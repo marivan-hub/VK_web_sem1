@@ -1,0 +1,48 @@
+{% load static %}
+
+<div class="card mb-3 {% if answer.is_correct %}border-success{% endif %}">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-2 text-center">
+                <div style="height: 200px;" class="border mb-2 w-100">
+                    <img src="{% static answer.author.avatar|default:'resources/pictures/default_avatar.jpg' %}"
+                         alt="avatar" class="img-fluid h-100" style="object-fit: cover;">
+                </div>
+                <div class="like-dislike-buttons">
+                    <button class="btn btn-outline-success like-btn">👍 <span class="count">{{ answer.likes }}</span></button>
+                    <button class="btn btn-outline-danger dislike-btn">👎 <span class="count">{{ answer.dislikes }}</span></button>
+                </div>
+            </div>
+            <div class="col d-flex flex-column justify-content-between">
+                <div>
+                    <p class="card-text">{{ answer.text }}</p>
+                    {% if answer.code %}
+                    <pre class="bg-light p-3 rounded"><code>{{ answer.code }}</code></pre>
+                    {% endif %}
+                </div>
+                <div class="card-footer">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <span class="text-muted small">
+                                Answered by {{ answer.author.name }} • {{ answer.created_at }} ago
+                            </span>
+                        </div>
+                        {% if user.is_authenticated and user == question.author %}
+                        <div class="col-auto">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox"
+                                       id="correctAnswer{{ answer.id }}"
+                                       {% if answer.is_correct %}checked{% endif %}
+                                       onchange="markAsCorrect({{ answer.id }})">
+                                <label class="form-check-label" for="correctAnswer{{ answer.id }}">
+                                    Correct answer
+                                </label>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

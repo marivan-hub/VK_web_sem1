@@ -1,0 +1,19 @@
+{% extends 'QA_project/base.html' %}
+{% load static %}
+
+{% block title %}Hot Questions - Questioneer{% endblock %}
+
+{% block content %}
+    <div class="d-flex align-items-center mb-3">
+        <h1 class="mb-0">Hot Questions</h1>
+        <a href="{% url 'index' %}" class="ms-auto">New Questions</a>
+    </div>
+
+    <div class="d-flex gap-3 flex-column">
+        {% for question in questions.object_list %}
+            {% include 'QA_project/question_card.html' %}
+        {% endfor %}
+
+        {% include 'QA_project/pagination.html' with page=questions %}
+    </div>
+{% endblock %}
