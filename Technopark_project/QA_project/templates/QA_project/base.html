@@ -6,7 +6,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Questioneer!</title>
+    <title>{% block title %}Questioneer!{% endblock %}</title>
     <link href="{% static 'bootstrap/bootstrap-5.3.3-dist/css/bootstrap.min.css' %}" rel="stylesheet">
     <link href="{% static 'css/styles.css' %}" rel="stylesheet">
     <link rel="icon" href="{% static 'resources/pictures/icon.jpeg' %}">
@@ -15,7 +15,7 @@
 <body>
     <nav class="navbar navbar-expand-lg navbar-light" style="background-color: #d9abdb;">
         <div class="container">
-            <a class="navbar-brand" href="/">
+            <a class="navbar-brand" href="{% url 'index' %}">
                 <img src="{% static 'resources/pictures/icon.jpeg' %}" alt="little_icon" width="30" height="24" class="d-inline-block align-text-top">
                 Questioneer
             </a>
@@ -24,7 +24,7 @@
                 <input class="form-control me-2" type="search" placeholder="Enter keywords" aria-label="Search">
                 <button class="btn btn-outline-success" type="submit">Search</button>
             </form>
-            <a href ="/ask"><button class="btn btn-outline-primary" type="submit" >Ask question</button></a>
+            <a href="{% url 'ask' %}"><button class="btn btn-outline-primary" type="submit">Ask question</button></a>
             <div class="d-flex gap-2 align-items-center">
                 <div>
                     <img src="{% static 'resources/pictures/avatar.jpeg' %}" class="img-thumbnail" alt="..." width="80" height="80">
@@ -32,8 +32,8 @@
                 <div class="content">
                     <div class="content__name">Mar Ivan</div>
                     <div class="content__links">
-                        <a href="/settings">Settings</a>
-                        <a href="/index_logout">Log out</a>
+                        <a href="{% url 'settings' %}">Settings</a>
+                        <a href="{% url 'index_logout' %}">Log out</a>
                     </div>
                 </div>
             </div>
@@ -53,9 +53,9 @@
                         <div class="card-body">
                             <h5 class="card-title">Popular Tags</h5>
                             <div class="d-flex flex-wrap gap-2">
-                                <span class="badge bg-primary">perl</span>
-                                <span class="badge bg-success">python</span>
-                                <span class="badge bg-info">TechnoPark</span>
+                                {% for tag in popular_tags %}
+                                    <a href="{% url 'tag' tag.name %}" class="badge bg-primary">{{ tag.name }}</a>
+                                {% endfor %}
                             </div>
                         </div>
                     </section>
@@ -64,8 +64,9 @@
                         <div class="card-body">
                             <h5 class="card-title">Best Members</h5>
                             <div class="list-group list-group-flush">
-                                <a href="#" class="list-group-item">Ivanov Ivan</a>
-                                <a href="#" class="list-group-item">Petrov Petr</a>
+                                {% for member in best_members %}
+                                    <a href="#" class="list-group-item">{{ member.name }}</a>
+                                {% endfor %}
                             </div>
                         </div>
                     </section>
@@ -75,5 +76,4 @@
     </main>
     <script src="{% static 'bootstrap/bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js' %}"></script>
 </body>
-
 </html>
