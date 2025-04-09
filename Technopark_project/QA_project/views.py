@@ -1,8 +1,7 @@
-from django.shortcuts import render
-
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
-
+from django.contrib.auth.decorators import login_required
+from .models import Question, Tag, Profile, Answer
 
 def paginate(objects_list, request, per_page=10):
     paginator = Paginator(objects_list, per_page)
@@ -20,156 +19,66 @@ def paginate(objects_list, request, per_page=10):
 
 def get_common_context():
     return {
-        'popular_tags': [
-            {'name': 'python'},
-            {'name': 'django'},
-            {'name': 'sql'},
-            {'name': 'bootstrap'},
-            {'name': 'javascript'},
-        ],
-        'best_members': [
-            {'name': 'Ivanov Ivan'},
-            {'name': 'Petrov Petr'},
-            {'name': 'Sidorov Alex'},
-        ],
+        'popular_tags': Tag.objects.popular_tags(),
+        'best_members': Profile.objects.best_members(),
     }
 
 
 def index(request):
-    questions = []
-    for i in range(1, 30):
-        questions.append({
-            'title': f'Question title {i}',
-            'id': i,
-            'text': f'This is detailed text for question {i}. ' * 5,
-            'tags': ['python', 'django', 'sql'][:i % 3 + 1],
-            'answers': i % 5,
-            'likes': i * 2,
-            'dislikes': i % 3,
-            'is_solved': i % 7 == 0,
-            'is_closed': i % 5 == 0 and i % 7 != 0,
-        })
-
+    questions = Question.objects.new()
     context = get_common_context()
-    context['questions'] = paginate(questions, request, 5)
+    context['page'] = paginate(questions, request)
     return render(request, "QA_project/index.html", context)
 
 
 def hot(request):
-    questions = []
-    for i in range(1, 30):
-        questions.append({
-            'title': f'Hot question  {i}',
-            'id': i,
-            'text': f'Текс формулировки hot вопроса {i}. ' * 5,
-            'tags': ['python', 'django', 'sql'][:i % 3 + 1],
-            'answers': i % 5,
-            'likes': i % 10 - 5,
-            'dislikes': i % 10 - 3,
-            'is_solved': i % 7 == 0,
-            'is_closed': i % 5 == 0 and i % 7 != 0,
-        })
-
+    questions = Question.objects.hot()
     context = get_common_context()
-    context['questions'] = paginate(questions, request, 5)
+    context['page'] = paginate(questions, request)
     return render(request, "QA_project/hot.html", context)
 
 
-def tag(request, tag):
-    questions = []
-    for i in range(1, 15):
-        questions.append({
-            'title': f'Вопрос по тегу {tag} {i}',
-            'id': i,
-            'text': f'Текст вопроса по тегу {tag} {i}. ' * 5,
-            'tags': [tag, 'python', 'django'][:i % 3 + 1],
-            'answers': i % 5,
-            'likes': i % 10 - 5,
-            'dislikes': i % 10 - 3,
-            'is_solved': i % 7 == 0,
-            'is_closed': i % 5 == 0 and i % 7 != 0,
-        })
-
+def tag(request, tag_name):
+    tag = get_object_or_404(Tag, name=tag_name)
+    questions = Question.objects.by_tag(tag_name)
     context = get_common_context()
-    context['questions'] = paginate(questions, request, 5)
+    context['page'] = paginate(questions, request)
     context['tag'] = tag
     return render(request, "QA_project/tag.html", context)
 
 
-
-def login(request):
-    return render(request,"../templates/QA_project/login.html")
-
-def ask(request):
-    return render(request,"../templates/QA_project/ask.html")
-
-def signup(request):
-    return render(request,"../templates/QA_project/signup.html")
-
 def question(request, pk):
-    answers = []
-    for i in range(1, 6):
-        answers.append({
-            'id': i,
-            'text': f'This is detailed answer {i} to question {pk}. ' * 3,
-            'code': f'SELECT * FROM table_{i} WHERE id = {pk};' if i % 2 == 0 else None,
-            'likes': pk * i,
-            'dislikes': pk % i,
-            'is_correct': i == 1,
-            'author': {
-                'name': f'User {i}',
-                'avatar': f'resources/pictures/avatar{i % 3 + 1}.jpg'
-            },
-            'created_at': f'{i} day(s) ago'
-        })
-
-    question_data = {
-        'title': f'Question {pk}',
-        'id': pk,
-        'text': 'Detailed question text. ' * 10,
-        'tags': ['python', 'django', 'sql'],
-        'answers': answers,
-        'likes': pk * 2,
-        'dislikes': pk % 3,
-        'is_solved': pk % 5 == 0,
-        'is_closed': False,
-        'author': {
-            'name': 'Question Author',
-            'avatar': 'resources/pictures/avatar.jpeg'
-        }
-    }
-
+    question = get_object_or_404(Question, pk=pk)
+    answers = Answer.objects.filter(question=question).order_by('-is_correct', '-rating')
     context = get_common_context()
-    context['question'] = question_data
-    context['answers'] = paginate(answers, request, 3)
+    context['question'] = question
+    context['page'] = paginate(answers, request, per_page=5)
     return render(request, "QA_project/question.html", context)
 
 
-def settings(request):
-    user_data = {
-        'username': 'current_user',
-        'email': 'user@example.com',
-        'avatar': 'resources/pictures/avatar.jpeg'
-    }
+def ask(request):
     context = get_common_context()
-    context['user'] = user_data
+    return render(request, "QA_project/ask.html", context)
+
+
+def login(request):
+    context = get_common_context()
+    return render(request, "QA_project/login.html", context)
+
+
+def signup(request):
+    context = get_common_context()
+    return render(request, "QA_project/signup.html", context)
+
+
+def settings(request):
+    context = get_common_context()
+    context['user'] = request.user.profile
     return render(request, "QA_project/settings.html", context)
 
-def index_logout(request):
-    questions = []
-    for i in range(1, 30):
-        questions.append({
-            'title': f'Question title {i}',
-            'id': i,
-            'text': f'This is detailed text for question {i}. ' * 5,
-            'tags': ['python', 'django', 'sql'][:i % 3 + 1],
-            'answers': i % 5,
-            'likes': i * 2,
-            'dislikes': i % 3,
-            'is_solved': i % 7 == 0,
-            'is_closed': i % 5 == 0 and i % 7 != 0,
-        })
 
+def index_logout(request):
+    questions = Question.objects.new()
     context = get_common_context()
-    context['page'] = paginate(questions, request, 5)
+    context['page'] = paginate(questions, request)
     return render(request, "QA_project/index_logout.html", context)
