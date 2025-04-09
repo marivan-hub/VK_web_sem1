@@ -1,27 +1,27 @@
 {% extends 'QA_project/base.html' %}
 {% load static %}
 
-{% block title %}Questions tagged {{ tag }} - Questioneer{% endblock %}
+{% block title %}Questions tagged {{ tag.name }} - Questioneer{% endblock %}
 
 {% block content %}
     <div class="d-flex align-items-center mb-3">
-        <h1 class="mb-0">Questions tagged "{{ tag }}"</h1>
+        <h1 class="mb-0">Questions tagged "{{ tag.name }}"</h1>
         <a href="{% url 'hot' %}" class="ms-auto">Hot Questions</a>
     </div>
 
     <div class="card mb-4">
         <div class="card-body">
             <div class="d-flex align-items-center">
-                <h2 class="mb-0 me-3">Tag: {{ tag }}</h2>
+                <h2 class="mb-0 me-3">Tag: {{ tag.name }}</h2>
             </div>
         </div>
     </div>
 
     <div class="d-flex gap-3 flex-column">
-        {% for question in questions.object_list %}
+        {% for question in page.object_list %}
             {% include 'QA_project/question_card.html' %}
         {% endfor %}
 
-        {% include 'QA_project/pagination.html' with page=questions %}
+        {% include 'QA_project/pagination.html' with page=page %}
     </div>
 {% endblock %}

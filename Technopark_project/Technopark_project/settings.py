@@ -77,14 +77,13 @@ WSGI_APPLICATION = 'Technopark_project.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'qa_db',
-        'USER': 'qa_user',
-        'PASSWORD': 'qapassword',
-        'HOST': 'localhost',
+        'NAME': 'qa_db', # os.getenv('POSTGRES_DB'),
+        'USER': 'qa_user', # os.getenv('POSTGRES_USER'),
+        'PASSWORD': 'qa_password', # os.getenv('POSTGRES_PASSWORD'),
+        'HOST': 'db',
         'PORT': '5432',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators

@@ -19,8 +19,10 @@ def paginate(objects_list, request, per_page=10):
 
 def get_common_context():
     return {
-        'popular_tags': Tag.objects.popular_tags(),
-        'best_members': Profile.objects.best_members(),
+        # 'popular_tags': Tag.objects.popular_tags(),
+        'popular_tags': Tag.objects.all(),
+        # 'best_members': Profile.objects.best_members(),
+        'best_members': Profile.objects.all()[:10],
     }
 
 
@@ -39,11 +41,12 @@ def hot(request):
 
 
 def tag(request, tag_name):
-    tag = get_object_or_404(Tag, name=tag_name)
+    tag_obj = get_object_or_404(Tag, name=tag_name)
     questions = Question.objects.by_tag(tag_name)
+    page = paginate(questions, request)  #
     context = get_common_context()
-    context['page'] = paginate(questions, request)
-    context['tag'] = tag
+    context['page'] = page  #
+    context['tag'] = tag_obj
     return render(request, "QA_project/tag.html", context)
 
 
