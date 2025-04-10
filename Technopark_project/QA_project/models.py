@@ -7,7 +7,7 @@ from django.db.models import Count, Case, When, IntegerField
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     nickname = models.CharField(null=True, default=None)
-    password = models.CharField(null=True, default=None) #todo пока что чар - потом скорее всего стоит поменять
+    password = models.CharField(null=True, default=None) #todo убрать
     avatar = models.ImageField(upload_to='avatars/', null=True, blank=True)
     rating = models.IntegerField(default=0)
     user_email = models.EmailField(null=True, default=None)
