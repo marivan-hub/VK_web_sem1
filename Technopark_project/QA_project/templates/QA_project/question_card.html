@@ -1,0 +1,60 @@
+{% load static %}
+{% if detailed %}
+<div class="card mb-4">
+    <div class="card-body">
+        <div class="row">
+            <div class="col d-flex flex-column justify-content-between">
+{% endif %}
+<div class="card">
+    <h5 class="card-header">
+        {% if question.is_solved %}
+            Problem solved
+            <img src="{% static 'resources/pictures/green_galochka.png' %}" style="max-width: 3%;" alt="Solved" class="img-fluid mb-2">
+        {% elif question.is_closed %}
+            Closed
+            <img src="{% static 'resources/pictures/red_cross.png' %}" style="max-width: 3%;" alt="Closed" class="img-fluid mb-2">
+        {% else %}
+            Open
+        {% endif %}
+    </h5>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-2">
+                <div style="height: 100px;" class="border mb-2 w-100">
+                    <img src="{% static 'resources/pictures/question.png' %}" alt="Question" class="img-fluid">
+                </div>
+                <div class="like-dislike-buttons">
+                    <button class="btn btn-outline-success like-btn">👍 <span class="count">{{ question.likes }}</span></button>
+                    <button class="btn btn-outline-danger dislike-btn">👎 <span class="count">{{ question.dislikes }}</span></button>
+                </div>
+            </div>
+            <div class="col d-flex flex-column justify-content-between">
+                <div>
+                    <a href="{% url 'question' question.id %}">
+                        <h4 class="card-title">{{ question.title }}</h4>
+                    </a>
+                    <p class="card-text">{{ question.text|truncatewords:30 }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card-footer">
+        <div class="row">
+            <div class="col">
+                <a href="{% url 'question' question.id %}">Answers ({{ question.answers }})</a>
+            </div>
+            <div class="col">
+                <span>Tags:</span>
+                {% for tag in question.tags %}
+                    <a href="{% url 'tag' tag %}" class="badge rounded-pill text-bg-primary">{{ tag }}</a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% if detailed %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}

@@ -1,12 +1,12 @@
 {% extends 'QA_project/base.html' %}
 {% load static %}
 
-{% block title %}Questioneer{% endblock %}
+{% block title %}Hot Questions - Questioneer{% endblock %}
 
 {% block content %}
     <div class="d-flex align-items-center mb-3">
-        <h1 class="mb-0">New Questions</h1>
-        <a href="{% url 'hot' %}" class="ms-auto">Hot Questions</a>
+        <h1 class="mb-0">Hot Questions</h1>
+        <a href="{% url 'index' %}" class="ms-auto">New Questions</a>
     </div>
 
     <div class="d-flex gap-3 flex-column">
