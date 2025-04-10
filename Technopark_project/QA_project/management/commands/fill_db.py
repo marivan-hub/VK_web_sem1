@@ -5,7 +5,7 @@ import random
 from QA_project.models import Profile, Tag, Question, Answer, QuestionLike, AnswerLike
 
 fake = Faker()
-
+#todo переделать
 
 class Command(BaseCommand):
     help = 'Fill database with test data'
