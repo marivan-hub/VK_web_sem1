@@ -1,0 +1,172 @@
+{% extends 'QA_project/base_not_auth.html' %}
+{% load static %}
+{% block content %}
+    <div class="d-flex align-items-center mb-3">
+        <h1 class="mb-0">New Questions</h1>
+        <a href="#" class="ms-auto">Hot Questions</a>
+    </div>
+    <div class="d-flex gap-3 flex-column">
+            <section class="col vh-100">
+                <div class="d-flex gap-3 flex-column">
+                    <div class="card">
+                        <h5 class="card-header">Problem solved
+                            <img src="{% static 'resources/pictures/green_galochka.png' %}" style="max-width: 3%;" alt="img" class="img-fluid mb-2">
+                        </h5>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-2">
+                                    <div style="height: 100px;" class="border mb-2 w-100">
+                                        <img src="{% static 'resources/pictures/question.png' %}" alt="img" class="img-fluid">
+                                    </div>
+                                        <div class="like-dislike-buttons">
+                                            <button class="btn btn-outline-success like-btn">👍 <span class="count">5</span></button>
+                                            <button class="btn btn-outline-danger dislike-btn">👎 <span class="count">2</span></button>
+                                        </div>
+                                </div>
+                                <div class="col d-flex flex-column justify-content-between">
+                                    <div>
+                                        <h4 class="card-title">How to drop all tables in a SQL Server database?</h4>
+                                        <p class="card-text">I'm trying to write a script that will completely empty a SQL Server database.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                        <div class="row">
+                            <div class="col">
+                                <a href="#">Answers (3)</a>
+                            </div>
+                            <div class="col">
+                                <span>Tags:</span>
+                                <span class="badge rounded-pill text-bg-primary">Primary</span>
+                                <span class="badge rounded-pill text-bg-secondary">Secondary</span>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h5 class="card-header">Closed
+                            <img src="{% static 'resources/pictures/red_cross.png' %}" style="max-width: 3%;" alt="img" class="img-fluid mb-2">
+                        </h5>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-2">
+                                    <div style="height: 100px;" class="border mb-2 w-100">
+                                        <img src="{% static 'resources/pictures/question.png' %}" alt="img" class="img-fluid">
+                                    </div>
+                                        <div class="like-dislike-buttons">
+                                            <button class="btn btn-outline-success like-btn">👍 <span class="count">5</span></button>
+                                            <button class="btn btn-outline-danger dislike-btn">👎 <span class="count">2</span></button>
+                                        </div>
+                                </div>
+                                <div class="col d-flex flex-column justify-content-between">
+                                    <div>
+                                        <h5 class="card-title">Joining 2 tables on Grouping Set/rollup total row on BigQuery</h5>
+                                        <p class="card-text">I have created 2 temporary tables that aggregate data. One is payment data where I have created a sum by month_year, and one is savings made aggregated in the same way. E.g. WITH PAYMENT (SELECT year_month ,SUM(AMOUNT) PAYMENT_AMOUNT FROM PAYMENTS GROUP BY ROLLUP (year_month))
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                        <div class="row">
+                            <div class="col">
+                                <a href="#">Answers (3)</a>
+                            </div>
+                            <div class="col">
+                                <span>Tags:</span>
+                                <span class="badge rounded-pill text-bg-primary">Primary</span>
+                                <span class="badge rounded-pill text-bg-secondary">Secondary</span>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h5 class="card-header">Closed
+                            <img src="{% static 'resources/pictures/red_cross.png' %}" style="max-width: 3%;" alt="img" class="img-fluid mb-2">
+                        </h5>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-2">
+                                    <div style="height: 100px;" class="border mb-2 w-100">
+                                        <img src="{% static 'resources/pictures/question.png' %}" alt="img" class="img-fluid">
+                                    </div>
+                                        <div class="like-dislike-buttons">
+                                            <button class="btn btn-outline-success like-btn">👍 <span class="count">5</span></button>
+                                            <button class="btn btn-outline-danger dislike-btn">👎 <span class="count">2</span></button>
+                                        </div>
+                                </div>
+                                <div class="col d-flex flex-column justify-content-between">
+                                    <div>
+                                        <h5 class="card-title">Joining 2 tables on Grouping Set/rollup total row on BigQuery</h5>
+                                        <p class="card-text">I have created 2 temporary tables that aggregate data. One is payment data where I have created a sum by month_year, and one is savings made aggregated in the same way. E.g. WITH PAYMENT (SELECT year_month ,SUM(AMOUNT) PAYMENT_AMOUNT FROM PAYMENTS GROUP BY ROLLUP (year_month))
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                        <div class="row">
+                            <div class="col">
+                                <a href="#">Answers (3)</a>
+                            </div>
+                            <div class="col">
+                                <span>Tags:</span>
+                                <span class="badge rounded-pill text-bg-primary">Primary</span>
+                                <span class="badge rounded-pill text-bg-secondary">Secondary</span>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h5 class="card-header">Closed
+                            <img src="{% static 'resources/pictures/red_cross.png' %}" style="max-width: 3%;" alt="img" class="img-fluid mb-2">
+                        </h5>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-2">
+                                    <div style="height: 100px;" class="border mb-2 w-100">
+                                        <img src="{% static 'resources/pictures/question.png' %}" alt="img" class="img-fluid">
+                                    </div>
+                                        <div class="like-dislike-buttons">
+                                            <button class="btn btn-outline-success like-btn">👍 <span class="count">5</span></button>
+                                            <button class="btn btn-outline-danger dislike-btn">👎 <span class="count">2</span></button>
+                                        </div>
+                                </div>
+                                <div class="col d-flex flex-column justify-content-between">
+                                    <div>
+                                        <h5 class="card-title">Joining 2 tables on Grouping Set/rollup total row on BigQuery</h5>
+                                        <p class="card-text">I have created 2 temporary tables that aggregate data. One is payment data where I have created a sum by month_year, and one is savings made aggregated in the same way. E.g. WITH PAYMENT (SELECT year_month ,SUM(AMOUNT) PAYMENT_AMOUNT FROM PAYMENTS GROUP BY ROLLUP (year_month))
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                        <div class="row">
+                            <div class="col">
+                                <a href="#">Answers (3)</a>
+                            </div>
+                            <div class="col">
+                                <span>Tags:</span>
+                                <span class="badge rounded-pill text-bg-primary">Primary</span>
+                                <span class="badge rounded-pill text-bg-secondary">Secondary</span>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+                    <nav aria-label="Page navigation example">
+                        <ul class="pagination">
+                            <li class="page-item"><a class="page-link" href="#">Previous</a></li>
+                            <li class="page-item"><a class="page-link" href="#">1</a></li>
+                            <li class="page-item"><a class="page-link" href="#">2</a></li>
+                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                            <li class="page-item"><a class="page-link" href="#">Next</a></li>
+                        </ul>
+                    </nav>
+                </div>
+            </section>
+    </div>
+{% endblock %}

@@ -1,0 +1,153 @@
+{% extends 'QA_project/base.html' %}
+{% load static %}
+{% block content %}
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="row">
+                <div class="col d-flex flex-column justify-content-between">
+                    <h5 class="card-header">Problem solved
+                        <img src="{% static 'resources/pictures/green_galochka.png' %}" style="max-width: 3%;" alt="img" class="img-fluid mb-2">
+                    </h5>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-2">
+                                <div style="height: 100px;" class="border mb-2 w-100">
+                                    <img src="{% static 'resources/pictures/question.png' %}" alt="img" class="img-fluid">
+                                </div>
+                                <div class="like-dislike-buttons text-center">
+                                    <button class="btn btn-outline-success like-btn">👍 <span class="count">5</span></button>
+                                    <button class="btn btn-outline-danger dislike-btn">👎 <span class="count">2</span></button>
+                                </div>
+                            </div>
+                            <div class="col d-flex flex-column justify-content-between">
+                                <div>
+                                    <h4 class="card-title">How to drop all tables in a SQL Server database?</h4>
+                                    <p class="card-text">I'm trying to write a script that will completely empty a SQL Server database.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="row">
+                            <div class="col">
+                                <span>Tags:</span>
+                                <span class="badge rounded-pill text-bg-primary">SQL</span>
+                                <span class="badge rounded-pill text-bg-secondary">DataBases</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <hr class="my-4">
+
+    <h2 class="mb-4">Answers</h2>
+
+    <div class="card mb-3">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-2 text-center">
+                    <div style="height: 200px;" class="border mb-2 w-100">
+                        <img src="{% static 'resources/pictures/avatar2.jpg' %}" alt="avatar" class="img-fluid h-100" style="object-fit: cover;">
+                    </div>
+                    <div class="like-dislike-buttons">
+                        <button class="btn btn-outline-success like-btn">👍 <span class="count">12</span></button>
+                        <button class="btn btn-outline-danger dislike-btn">👎 <span class="count">1</span></button>
+                    </div>
+                </div>
+                <div class="col d-flex flex-column justify-content-between">
+                    <div>
+                        <p class="card-text">You can use the following SQL script to drop all tables in your database. First, it generates the drop statements for all tables, then executes them:</p>
+                        <pre class="bg-light p-3 rounded"><code>-- Generate drop statements for all tables
+SELECT 'DROP TABLE [' + TABLE_SCHEMA + '].[' + TABLE_NAME + ']'
+FROM INFORMATION_SCHEMA.TABLES
+WHERE TABLE_TYPE = 'BASE TABLE'</code></pre>
+                    </div>
+                    <div class="card-footer">
+                        <div class="row align-items-center">
+                            <div class="col">
+                                <span class="text-muted small">Answered by John Doe • 2 days ago</span>
+                            </div>
+                            <div class="col-auto">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="correctAnswer1">
+                                    <label class="form-check-label" for="correctAnswer1">
+                                        Correct answer
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-3">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-2 text-center">
+                    <div style="height: 200px;" class="border mb-2 w-100">
+                        <img src="{% static 'resources/pictures/avatar3.jpg' %}" alt="avatar" class="img-fluid h-100" style="object-fit: cover;">
+                    </div>
+                    <div class="like-dislike-buttons">
+                        <button class="btn btn-outline-success like-btn">👍 <span class="count">8</span></button>
+                        <button class="btn btn-outline-danger dislike-btn">👎 <span class="count">3</span></button>
+                    </div>
+                </div>
+                <div class="col d-flex flex-column justify-content-between">
+                    <div>
+                        <p class="card-text">Another approach is to disable constraints first before dropping tables. This can help avoid reference constraint errors:</p>
+                        <pre class="bg-light p-3 rounded"><code>-- Disable all constraints
+EXEC sp_MSforeachtable 'ALTER TABLE ? NOCHECK CONSTRAINT ALL'
+
+-- Drop tables
+EXEC sp_MSforeachtable 'DROP TABLE ?'</code></pre>
+                    </div>
+                    <div class="card-footer">
+                        <div class="row align-items-center">
+                            <div class="col">
+                                <span class="text-muted small">Answered by Jane Smith • 1 week ago</span>
+                            </div>
+                            <div class="col-auto">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="correctAnswer2">
+                                    <label class="form-check-label" for="correctAnswer2">
+                                        Correct answer
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mt-4">
+        <div class="card-header">
+            <h4>Your Answer</h4>
+        </div>
+        <div class="card-body">
+                <form method="post">
+                    <div class="form-group mb-3">
+                        <textarea class="form-control" name="text" rows="5" placeholder="Write your answer here..."></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Post Answer</button>
+                </form>
+        </div>
+    </div>
+    <nav aria-label="Page navigation example" class="my-4">
+        <ul class="pagination justify-content-center">
+            <li class="page-item disabled"><a class="page-link" href="#">Previous</a></li>
+            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+            <li class="page-item"><a class="page-link" href="#">2</a></li>
+            <li class="page-item"><a class="page-link" href="#">3</a></li>
+            <li class="page-item"><a class="page-link" href="#">Next</a></li>
+        </ul>
+    </nav>
+
+{% endblock %}
