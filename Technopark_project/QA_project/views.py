@@ -19,10 +19,8 @@ def paginate(objects_list, request, per_page=10):
 
 def get_common_context():
     return {
-        # 'popular_tags': Tag.objects.popular_tags(),
-        'popular_tags': Tag.objects.all(),
-        # 'best_members': Profile.objects.best_members(),
-        'best_members': Profile.objects.all()[:10],
+        'popular_tags': Tag.objects.popular_tags(),
+        'best_members': Profile.objects.best_members(),
     }
 
 

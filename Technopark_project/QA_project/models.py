@@ -4,6 +4,11 @@ from django.core.validators import MinLengthValidator
 from django.db.models import Count, Case, When, IntegerField
 
 
+class ProfileManager(models.Manager):
+    def best_members(self):
+        return self.order_by('-rating')[:10]
+
+
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     nickname = models.CharField(null=True, default=None)
@@ -11,13 +16,14 @@ class Profile(models.Model):
     rating = models.IntegerField(default=0)
     user_email = models.EmailField(null=True, default=None)
 
+    objects = ProfileManager()  # Добавьте эту строку
+
     @property
     def name(self):
         return self.user.username
 
     def __str__(self):
         return self.name
-
 class TagManager(models.Manager):
     def popular_tags(self):
         return self.annotate(
@@ -28,6 +34,8 @@ class TagManager(models.Manager):
 class Tag(models.Model):
     name = models.CharField(max_length=50, unique=True)
     description = models.TextField(blank=True)
+
+    objects = TagManager()
 
     def __str__(self):
         return self.name
@@ -48,7 +56,7 @@ class Question(models.Model):
     text = models.TextField(validators=[MinLengthValidator(20)])
     author = models.ForeignKey(Profile, on_delete=models.CASCADE)
     tags = models.ManyToManyField(Tag)
-    created_at = models.DateTimeField(auto_now_add=True, default=None)
+    created_at = models.DateTimeField(auto_now_add=True)
     edited_at = models.DateTimeField(default=None)
     rating = models.IntegerField(default=0)
     answers_count = models.IntegerField(default=0)
@@ -73,7 +81,7 @@ class Answer(models.Model):
     text = models.TextField(validators=[MinLengthValidator(20)])
     question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name='answers')
     author = models.ForeignKey(Profile, on_delete=models.CASCADE)
-    created_at = models.DateTimeField(auto_now_add=True, default=None)
+    created_at = models.DateTimeField(auto_now_add=True)
     edited_at = models.DateTimeField(default=None)
     rating = models.IntegerField(default=0)
     is_correct = models.BooleanField(default=False)
@@ -94,7 +102,7 @@ class QuestionLike(models.Model):
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     user = models.ForeignKey(Profile, on_delete=models.CASCADE)
     is_positive = models.BooleanField(default=True)
-    created_at = models.DateTimeField(auto_now_add=True, default=None)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         unique_together = ('question', 'user')
