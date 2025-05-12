@@ -76,22 +76,19 @@ class Command(BaseCommand):
 
         questions = list(Question.objects.order_by('-id')[:num_questions])
         through_model = Question.tags.through
-        m2m_relations = set()  # Используем set для уникальных связей
+        m2m_relations = set()
 
-        # Создаём уникальные связи между вопросами и тегами
         for question in questions:
             num_tags_for_question = random.randint(1, 3)
             selected_tags = random.sample(tag_ids, k=min(num_tags_for_question, len(tag_ids)))
             for tag_id in selected_tags:
                 m2m_relations.add((question.id, tag_id))
 
-        # Формируем объекты промежуточной модели для связей
         through_model_objs = [
             through_model(question_id=q_id, tag_id=tag_id)
             for q_id, tag_id in m2m_relations
         ]
 
-        # Вставляем уникальные связи в базу данных
         through_model.objects.bulk_create(through_model_objs, batch_size=BATCH_SIZE)
 
     def _create_answers(self, num_answers):
