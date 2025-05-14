@@ -1,16 +1,22 @@
 {% extends 'QA_project/base.html' %}
 {% load static %}
 
+{% block title %}{{ question.title }}{% endblock %}
+
 {% block content %}
     {% include 'QA_project/question_card.html' with question=question detailed=True %}
 
-    <hr class="my-4">
+    <h2 class="my-4">Answers</h2>
 
-    <h2 class="mb-4">Answers</h2>
+    <div class="answers-list mb-4">
+        {% for answer in page.object_list %}
+            {% include 'QA_project/answer_card.html' %}
+        {% empty %}
+            <div class="alert alert-info">No answers yet. Be the first to answer!</div>
+        {% endfor %}
+    </div>
 
-    {% for answer in question.answers %}
-        {% include 'QA_project/answer_card.html' %}
-    {% endfor %}
+    {% include 'QA_project/pagination.html' with page=page %}
 
     <div class="card mt-4">
         <div class="card-header">
@@ -18,14 +24,12 @@
         </div>
         <div class="card-body">
             <form method="post">
+                {% csrf_token %}
                 <div class="form-group mb-3">
-                    <textarea class="form-control" name="text" rows="5"
-                              placeholder="Write your answer here..." required></textarea>
+                    <textarea class="form-control" name="text" rows="5" required></textarea>
                 </div>
                 <button type="submit" class="btn btn-primary">Post Answer</button>
             </form>
         </div>
     </div>
-
-    {% include 'QA_project/pagination.html' with page=answers %}
 {% endblock %}

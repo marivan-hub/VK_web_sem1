@@ -24,7 +24,7 @@
                     <img src="{% static 'resources/pictures/question.png' %}" alt="Question" class="img-fluid">
                 </div>
                 <div class="like-dislike-buttons">
-                    <button class="btn btn-outline-success like-btn">👍 <span class="count">{{ question.likes }}</span></button>
+                    <button class="btn btn-outline-success like-btn">👍 <span class="count">{{ question.rating }}</span></button>
                     <button class="btn btn-outline-danger dislike-btn">👎 <span class="count">{{ question.dislikes }}</span></button>
                 </div>
             </div>
@@ -41,12 +41,14 @@
     <div class="card-footer">
         <div class="row">
             <div class="col">
-                <a href="{% url 'question' question.id %}">Answers ({{ question.answers }})</a>
+                <a href="{% url 'question' question.id %}">Answers ({{ question.answers_count }})</a>
             </div>
             <div class="col">
                 <span>Tags:</span>
-                {% for tag in question.tags %}
-                    <a href="{% url 'tag' tag %}" class="badge rounded-pill text-bg-primary">{{ tag }}</a>
+                {% for tag in question.tags.all %}
+                    <a href="{% url 'tag' tag.name %}" class="badge rounded-pill text-bg-primary">{{ tag.name }}</a>
+                {% empty %}
+                    <span class="text-muted">No tags</span>
                 {% endfor %}
             </div>
         </div>
