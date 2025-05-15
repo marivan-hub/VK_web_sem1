@@ -16,7 +16,7 @@ class Profile(models.Model):
     rating = models.IntegerField(default=0)
     user_email = models.EmailField(null=True, default=None)
 
-    objects = ProfileManager()  # Добавьте эту строку
+    objects = ProfileManager()
 
     @property
     def name(self):
@@ -43,7 +43,6 @@ class Tag(models.Model):
 class QuestionManager(models.Manager):
     def new(self):
         return self.order_by('-created_at')
-        # return self.order_by('-pk')
 
     def hot(self):
         return self.order_by('-rating')
