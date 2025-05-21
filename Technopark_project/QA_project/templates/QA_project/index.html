@@ -1,7 +1,7 @@
 {% extends 'QA_project/base.html' %}
 {% load static %}
 
-{% block title %}Questioneer{% endblock %}
+{% block title %}Questioneer - New Questions{% endblock %}
 
 {% block content %}
     <div class="d-flex align-items-center mb-3">
@@ -13,7 +13,6 @@
         {% for question in page.object_list %}
             {% include 'QA_project/question_card.html' %}
         {% endfor %}
-
         {% include 'QA_project/pagination.html' with page=page %}
     </div>
 {% endblock %}

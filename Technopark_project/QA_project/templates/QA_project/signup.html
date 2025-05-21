@@ -1,4 +1,4 @@
-{% extends 'QA_project/base_not_auth.html' %}
+{% extends 'QA_project/base.html' %}
 {% load static %}
 
 {% block title %}Sign Up - Questioneer{% endblock %}
@@ -9,43 +9,11 @@
         <div class="card">
             <div class="card-body">
                 <h2 class="card-title text-center mb-4">Sign Up</h2>
-
-                <form method="post" enctype="multipart/form-data" onsubmit="return validateUsername()">
-                    <div class="form-group">
-                        <label for="username">Username</label>
-                        <input type="text" class="form-control" id="username" name="username"
-                               placeholder="Enter username" required>
-                        <div id="username-error" class="invalid-feedback" style="display: none;">
-                            Демонстрация сообщения об ошибке, попробуйте "username"
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="email">Email</label>
-                        <input type="email" class="form-control" id="email" name="email"
-                               placeholder="Enter email" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="nickname">Nickname</label>
-                        <input type="text" class="form-control" id="nickname" name="nickname"
-                               placeholder="Enter nickname">
-                    </div>
-                    <div class="form-group">
-                        <label for="password">Password</label>
-                        <input type="password" class="form-control" id="password" name="password"
-                               placeholder="Enter password" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="repeat-password">Repeat Password</label>
-                        <input type="password" class="form-control" id="repeat-password"
-                               name="repeat-password" placeholder="Repeat password" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="avatar">Avatar</label>
-                        <input type="file" class="form-control-file" id="avatar" name="avatar">
-                    </div>
+                <form method="post" enctype="multipart/form-data" onsubmit="return validateSignup()">
+                    {% csrf_token %}
+                    {{ form.as_p }}
                     <button type="submit" class="btn btn-primary btn-block mt-4">Sign Up</button>
                 </form>
-
                 <div class="text-center mt-3">
                     <p>Already have an account? <a href="{% url 'login' %}">Login</a></p>
                 </div>
@@ -53,19 +21,4 @@
         </div>
     </div>
 </div>
-
-<script>
-    function validateUsername() {
-        const username = document.getElementById('username').value;
-        const errorElement = document.getElementById('username-error');
-
-        if (username.toLowerCase() === 'username') {
-            errorElement.style.display = 'none';
-            return true;
-        } else {
-            errorElement.style.display = 'block';
-            return false;
-        }
-    }
-</script>
 {% endblock %}

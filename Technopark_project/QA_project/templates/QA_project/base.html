@@ -14,32 +14,12 @@
 
 <body>
     <nav class="navbar navbar-expand-lg navbar-light" style="background-color: #d9abdb;">
-        <div class="container">
-            <a class="navbar-brand" href="{% url 'index' %}">
-                <img src="{% static 'resources/pictures/icon.jpeg' %}" alt="little_icon" width="30" height="24" class="d-inline-block align-text-top">
-                Questioneer
-            </a>
-
-            <form class="d-flex" role="search">
-                <input class="form-control me-2" type="search" placeholder="Enter keywords" aria-label="Search">
-                <button class="btn btn-outline-success" type="submit">Search</button>
-            </form>
-            <a href="{% url 'ask' %}"><button class="btn btn-outline-primary" type="submit">Ask question</button></a>
-            <div class="d-flex gap-2 align-items-center">
-                <div>
-                    <img src="{% static 'resources/pictures/avatar.jpeg' %}" class="img-thumbnail" alt="..." width="80" height="80">
-                </div>
-                <div class="content">
-                    <div class="content__name">Mar Ivan</div>
-                    <div class="content__links">
-                        <a href="{% url 'settings' %}">Settings</a>
-                        <a href="{% url 'index_logout' %}">Log out</a>
-                    </div>
-                </div>
-            </div>
-        </div>
+        {% if user.is_authenticated %}
+            {% include 'QA_project/navbar_auth.html' %}
+        {% else %}
+            {% include 'QA_project/navbar_not_auth.html' %}
+        {% endif %}
     </nav>
-
     <main class="container mt-3">
         <div class="row">
             <section class="col-lg-9 col-md-8">
@@ -74,6 +54,8 @@
             </aside>
         </div>
     </main>
+
     <script src="{% static 'bootstrap/bootstrap-5.3.3-dist/js/bootstrap.bundle.min.js' %}"></script>
 </body>
+
 </html>
