@@ -1,0 +1,48 @@
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.like-dislike-buttons').forEach(container => {
+        const likeBtn = container.querySelector('.like-btn');
+        const dislikeBtn = container.querySelector('.dislike-btn');
+        const parent = container.closest('[id^=question-], [id^=answer-]');
+        const isAnswer = parent && parent.id.startsWith('answer-');
+        const id = parent.id.split('-')[1];
+
+        likeBtn.addEventListener('click', () => {
+            sendLike(id, 'like', isAnswer, container);
+        });
+
+        dislikeBtn.addEventListener('click', () => {
+            sendLike(id, 'dislike', isAnswer, container);
+        });
+    });
+
+    function sendLike(id, type, isAnswer, container) {
+        fetch(isAnswer ? '/like-answer/' : '/like-question/', {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: `id=${id}&type=${type}`
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.likes !== undefined && data.dislikes !== undefined) {
+                const [likeCountSpan, dislikeCountSpan] = container.querySelectorAll('.count');
+                likeCountSpan.textContent = data.likes;
+                dislikeCountSpan.textContent = data.dislikes;
+            } else {
+                alert(data.error || 'Something went wrong');
+            }
+        });
+    }
+
+    function getCookie(name) {
+        const cookieValue = document.cookie
+            .split('; ')
+            .find(row => row.startsWith(name + '='))
+            ?.split('=')[1];
+        return cookieValue;
+    }
+});
+</script>

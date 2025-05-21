@@ -1,14 +1,82 @@
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
+from django.http import JsonResponse
 from django.shortcuts import redirect
 from django.shortcuts import render, get_object_or_404
+from django.views.decorators.http import require_POST
 
 from .forms import AskForm, AnswerForm
 from .forms import SignupForm, LoginForm, ProfileEditForm
-from .models import Question, Tag, Profile, Answer
+from .models import Question, Tag, Profile, Answer, AnswerLike, QuestionLike
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.urls import reverse
+
+
+@require_POST
+@login_required
+def like_question(request):
+    question_id = request.POST.get('id')
+    like_type = request.POST.get('type')  # 'like' or 'dislike'
+    try:
+        question = Question.objects.get(id=question_id)
+        profile = request.user.profile
+
+        like_obj, created = QuestionLike.objects.get_or_create(question=question, user=profile)
+        if like_type == 'like':
+            like_obj.is_positive = True
+        elif like_type == 'dislike':
+            like_obj.is_positive = False
+        like_obj.save()
+
+        # Подсчёт
+        likes = QuestionLike.objects.filter(question=question, is_positive=True).count()
+        dislikes = QuestionLike.objects.filter(question=question, is_positive=False).count()
+
+        return JsonResponse({'likes': likes, 'dislikes': dislikes})
+    except Question.DoesNotExist:
+        return JsonResponse({'error': 'Question not found'}, status=404)
+
+
+@require_POST
+@login_required
+def like_answer(request):
+    answer_id = request.POST.get('id')
+    like_type = request.POST.get('type')
+    try:
+        answer = Answer.objects.get(id=answer_id)
+        profile = request.user.profile
+
+        like_obj, created = AnswerLike.objects.get_or_create(answer=answer, user=profile)
+        if like_type == 'like':
+            like_obj.is_positive = True
+        elif like_type == 'dislike':
+            like_obj.is_positive = False
+        like_obj.save()
+
+        likes = AnswerLike.objects.filter(answer=answer, is_positive=True).count()
+        dislikes = AnswerLike.objects.filter(answer=answer, is_positive=False).count()
+
+        return JsonResponse({'likes': likes, 'dislikes': dislikes})
+    except Answer.DoesNotExist:
+        return JsonResponse({'error': 'Answer not found'}, status=404)
+
+
+@require_POST
+@login_required
+def mark_correct_answer(request):
+    answer_id = request.POST.get('id')
+    try:
+        answer = Answer.objects.select_related('question').get(id=answer_id)
+        question = answer.question
+        if question.author != request.user.profile:
+            return JsonResponse({'error': 'Only the author can mark correct answers'}, status=403)
+        question.answers.update(is_correct=False)
+        answer.is_correct = True
+        answer.save()
+        return JsonResponse({'success': True, 'answer_id': answer_id})
+    except Answer.DoesNotExist:
+        return JsonResponse({'error': 'Answer not found'}, status=404)
 
 
 def paginate(objects_list, request, per_page=10):
