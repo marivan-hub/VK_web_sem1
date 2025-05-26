@@ -46,7 +46,7 @@
             <div class="col">
                 <span>Tags:</span>
                 {% for tag in question.tags.all %}
-                    <a href="{% url 'tag' tag.name %}" class="badge rounded-pill text-bg-primary">{{ tag.name }}</a>
+                    <a href="{% url 'tag' tag.name|default:'untagged' %}" class="badge rounded-pill text-bg-primary">{{ tag.name }}</a>
                 {% empty %}
                     <span class="text-muted">No tags</span>
                 {% endfor %}
