@@ -3,23 +3,44 @@ from .models import Profile, Question, Answer, Tag
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 
+
 class AskForm(forms.ModelForm):
-    tags = forms.CharField(help_text="Enter tags separated by commas")
+    tags = forms.CharField(
+        help_text="Enter up to 5 tags separated by commas",
+        widget=forms.TextInput(attrs={'placeholder': 'tag1, tag2, tag3'})
+    )
 
     class Meta:
         model = Question
         fields = ['title', 'text', 'tags']
 
+    def clean_tags(self):
+        tags = self.cleaned_data['tags']
+        tag_names = [name.strip() for name in tags.split(',') if name.strip()]
+
+        if len(tag_names) > 5:
+            raise forms.ValidationError("You can't add more than 5 tags.")
+
+        for tag in tag_names:
+            if len(tag) > 50:
+                raise forms.ValidationError(f"Tag '{tag}' is too long (max 50 characters).")
+            if not tag.isalnum():
+                raise forms.ValidationError(f"Tag '{tag}' contains invalid characters. Use letters and numbers only.")
+
+        return tags
+
     def save(self, author):
         question = super().save(commit=False)
         question.author = author
         question.save()
-        tag_names = [name.strip() for name in self.cleaned_data['tags'].split(',')]
-        for name in tag_names:
-            tag, created = Tag.objects.get_or_create(name=name)
-            question.tags.add(tag)
-        return question
 
+        tag_names = [name.strip() for name in self.cleaned_data['tags'].split(',') if name.strip()]
+        tag_names = tag_names[:5]
+        for name in tag_names:
+            tag, created = Tag.objects.get_or_create(name=name.lower())
+            question.tags.add(tag)
+
+        return question
 
 class AnswerForm(forms.ModelForm):
     class Meta:

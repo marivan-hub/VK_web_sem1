@@ -65,8 +65,12 @@ def question(request, pk):
 
     per_page = 5
     paginator = Paginator(answers_qs, per_page)
-
+    page_number = 1
     if request.method == 'POST':
+        if not request.user.is_authenticated:
+            login_url = reverse('login') + '?continue=' + request.path
+            return redirect(login_url)
+
         form = AnswerForm(request.POST)
         if form.is_valid():
             answer = form.save(commit=False)
@@ -112,20 +116,15 @@ def login_view(request):
     context = get_common_context()
     context['form'] = LoginForm(request.POST or None)
     context['continue'] = next_url
-    print('tut')
     if request.method == 'POST' and context['form'].is_valid():
-        print('tut 2')
         user = authenticate(
             request,
             username=context['form'].cleaned_data['username'],
             password=context['form'].cleaned_data['password']
         )
         if user is not None:
-            print('tut 3')
             login(request, user)
-            print(user)
             if url_has_allowed_host_and_scheme(next_url, allowed_hosts={request.get_host()}):
-                print("login here")
                 return redirect(next_url)
             return redirect('index')
         else:
