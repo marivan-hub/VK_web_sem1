@@ -5,63 +5,133 @@ from django.http import JsonResponse
 from django.shortcuts import redirect
 from django.shortcuts import render, get_object_or_404
 from django.views.decorators.http import require_POST
-
 from .forms import AskForm, AnswerForm
 from .forms import SignupForm, LoginForm, ProfileEditForm
 from .models import Question, Tag, Profile, Answer, AnswerLike, QuestionLike
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.urls import reverse
+from django.db import models, transaction
 
 
 @require_POST
 @login_required
 def like_question(request):
     question_id = request.POST.get('id')
-    like_type = request.POST.get('type')  # 'like' or 'dislike'
+    action = request.POST.get('type')  # 'like' или 'dislike'
     try:
         question = Question.objects.get(id=question_id)
         profile = request.user.profile
 
-        like_obj, created = QuestionLike.objects.get_or_create(question=question, user=profile)
-        if like_type == 'like':
-            like_obj.is_positive = True
-        elif like_type == 'dislike':
-            like_obj.is_positive = False
-        like_obj.save()
+        with transaction.atomic():
+            existing_like = QuestionLike.objects.filter(
+                question=question,
+                user=profile
+            ).first()
 
-        # Подсчёт
-        likes = QuestionLike.objects.filter(question=question, is_positive=True).count()
-        dislikes = QuestionLike.objects.filter(question=question, is_positive=False).count()
+            # Определяем текущее действие пользователя
+            if existing_like:
+                if existing_like.is_positive and action == 'like':
+                    # Снимаем лайк
+                    existing_like.delete()
+                    user_vote = None
+                elif not existing_like.is_positive and action == 'dislike':
+                    # Снимаем дизлайк
+                    existing_like.delete()
+                    user_vote = None
+                else:
+                    # Меняем лайк на дизлайк или наоборот
+                    existing_like.is_positive = (action == 'like')
+                    existing_like.save()
+                    user_vote = action
+            else:
+                # Ставим новый лайк/дизлайк
+                QuestionLike.objects.create(
+                    question=question,
+                    user=profile,
+                    is_positive=(action == 'like')
+                )
+                user_vote = action
 
-        return JsonResponse({'likes': likes, 'dislikes': dislikes})
+            # Обновляем счетчики
+            likes = QuestionLike.objects.filter(
+                question=question,
+                is_positive=True
+            ).count()
+            dislikes = QuestionLike.objects.filter(
+                question=question,
+                is_positive=False
+            ).count()
+
+            return JsonResponse({
+                'likes': likes,
+                'dislikes': dislikes,
+                'user_vote': user_vote
+            })
+
     except Question.DoesNotExist:
         return JsonResponse({'error': 'Question not found'}, status=404)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=400)
 
 
 @require_POST
 @login_required
 def like_answer(request):
     answer_id = request.POST.get('id')
-    like_type = request.POST.get('type')
+    action = request.POST.get('type')  # 'like' или 'dislike'
     try:
         answer = Answer.objects.get(id=answer_id)
         profile = request.user.profile
 
-        like_obj, created = AnswerLike.objects.get_or_create(answer=answer, user=profile)
-        if like_type == 'like':
-            like_obj.is_positive = True
-        elif like_type == 'dislike':
-            like_obj.is_positive = False
-        like_obj.save()
+        with transaction.atomic():
+            existing_like = AnswerLike.objects.filter(
+                answer=answer,
+                user=profile
+            ).first()
 
-        likes = AnswerLike.objects.filter(answer=answer, is_positive=True).count()
-        dislikes = AnswerLike.objects.filter(answer=answer, is_positive=False).count()
+            if existing_like:
+                if existing_like.is_positive and action == 'like':
+                    # Снимаем лайк
+                    existing_like.delete()
+                    user_vote = None
+                elif not existing_like.is_positive and action == 'dislike':
+                    # Снимаем дизлайк
+                    existing_like.delete()
+                    user_vote = None
+                else:
+                    # Меняем лайк на дизлайк или наоборот
+                    existing_like.is_positive = (action == 'like')
+                    existing_like.save()
+                    user_vote = action
+            else:
+                # Ставим новый лайк/дизлайк
+                AnswerLike.objects.create(
+                    answer=answer,
+                    user=profile,
+                    is_positive=(action == 'like')
+                )
+                user_vote = action
 
-        return JsonResponse({'likes': likes, 'dislikes': dislikes})
+            # Обновляем счетчики
+            likes = AnswerLike.objects.filter(
+                answer=answer,
+                is_positive=True
+            ).count()
+            dislikes = AnswerLike.objects.filter(
+                answer=answer,
+                is_positive=False
+            ).count()
+
+            return JsonResponse({
+                'likes': likes,
+                'dislikes': dislikes,
+                'user_vote': user_vote
+            })
+
     except Answer.DoesNotExist:
         return JsonResponse({'error': 'Answer not found'}, status=404)
-
-
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=400)
 @require_POST
 @login_required
 def mark_correct_answer(request):
@@ -128,8 +198,16 @@ def question(request, pk):
     question = get_object_or_404(Question, pk=pk)
     answers_qs = Answer.objects.filter(question=question).order_by('-is_correct', '-rating')
 
+    # Добавляем информацию о голосе пользователя
+    user_vote = None
+    if request.user.is_authenticated:
+        user_like = QuestionLike.objects.filter(question=question, user=request.user.profile).first()
+        if user_like:
+            user_vote = 'like' if user_like.is_positive else 'dislike'
+
     context = get_common_context()
     context['question'] = question
+    context['user_vote'] = user_vote
 
     per_page = 5
     paginator = Paginator(answers_qs, per_page)

@@ -1,7 +1,6 @@
 {% load static %}
 
-<div class="card mb-3 {% if answer.is_correct %}border-success{% endif %}">
-    <div id="answer-{{ answer.id }}" class="card mb-3 {% if answer.is_correct %}border-success{% endif %}">
+<div id="answer-{{ answer.id }}" class="card mb-3 {% if answer.is_correct %}border-success{% endif %}">
     <div class="card-body">
         <div class="row">
             <div class="col-2 text-center">
@@ -10,13 +9,13 @@
                          alt="avatar" class="img-fluid h-100" style="object-fit: cover;">
                 </div>
                 <div class="like-dislike-buttons">
-                    <button class="btn btn-outline-success like-btn"
-                            data-type="answer" data-id="{{ answer.id }}">
-                        👍 <span class="count">{{ answer.rating }}</span>
+                    <button class="btn {% if answer.user_vote == 'like' %}btn-success{% else %}btn-outline-success{% endif %} like-btn"
+                            data-id="{{ answer.id }}">
+                        👍 <span class="count">{{ answer.likes }}</span>
                     </button>
-                    <button class="btn btn-outline-danger dislike-btn"
-                            data-type="answer" data-id="{{ answer.id }}">
-                        👎
+                    <button class="btn {% if answer.user_vote == 'dislike' %}btn-danger{% else %}btn-outline-danger{% endif %} dislike-btn"
+                            data-id="{{ answer.id }}">
+                        👎 <span class="count">{{ answer.dislikes }}</span>
                     </button>
                 </div>
             </div>
@@ -31,74 +30,132 @@
                     <div class="row align-items-center">
                         <div class="col">
                             <span class="text-muted small">
-                                Answered by {{ answer.author.name }} • {{ answer.created_at }} ago
+                                Answered by {{ answer.author.name }} • {{ answer.created_at|timesince }} ago
                             </span>
                         </div>
+                        {% if user.is_authenticated and question.author == user.profile %}
                         <div class="col-auto">
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox"
                                        id="correctAnswer{{ answer.id }}"
-                                       {% if answer.is_correct %}
-                                       checked
-                                       {% endif %}
-                                       onchange="markAsCorrect({{ answer.id }})">
+                                       {% if answer.is_correct %}checked{% endif %}
+                                       onchange="markAsCorrect(this, {{ answer.id }})">
                                 <label class="form-check-label" for="correctAnswer{{ answer.id }}">
                                     Correct answer
                                 </label>
                             </div>
                         </div>
+                        {% endif %}
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    </div>
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-    document.querySelectorAll('[id^="answer-"]').forEach(card => {
-        const answerId = card.id.split('-')[1];
+document.addEventListener('DOMContentLoaded', function() {
+    // Общая функция для обработки голосов
+    function setupVoteHandlers(card, likeEndpoint) {
         const likeBtn = card.querySelector('.like-btn');
         const dislikeBtn = card.querySelector('.dislike-btn');
         const likeCount = likeBtn.querySelector('.count');
         const dislikeCount = dislikeBtn.querySelector('.count');
 
-        likeBtn.addEventListener('click', function () {
-            sendAnswerLike(answerId, 'like', likeCount, dislikeCount);
-        });
+        // Таймеры для debounce
+        let likeTimer = null;
+        let dislikeTimer = null;
 
-        dislikeBtn.addEventListener('click', function () {
-            sendAnswerLike(answerId, 'dislike', likeCount, dislikeCount);
-        });
-    });
+        // Флаг для блокировки повторных кликов
+        let isProcessing = false;
 
-    function sendAnswerLike(id, type, likeSpan, dislikeSpan) {
-        fetch('/like-answer/', {
-            method: 'POST',
-            headers: {
-                'X-CSRFToken': getCookie('csrftoken'),
-                'Content-Type': 'application/x-www-form-urlencoded'
-            },
-            body: `id=${id}&type=${type}`
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.likes !== undefined && data.dislikes !== undefined) {
-                likeSpan.textContent = data.likes;
-                dislikeSpan.textContent = data.dislikes;
-            } else {
-                alert(data.error || 'Ошибка при отправке лайка/дизлайка');
+        // Общая функция обработки голоса
+        async function processVote(voteType) {
+            if (isProcessing) return;
+
+            isProcessing = true;
+
+            const id = card.id.split('-')[1];
+            const btn = voteType === 'like' ? likeBtn : dislikeBtn;
+            const currentVote = btn.classList.contains(voteType === 'like' ? 'btn-success' : 'btn-danger');
+            const action = currentVote ? 'remove' : voteType;
+
+            try {
+                const response = await fetch(`/${likeEndpoint}/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': getCookie('csrftoken'),
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: `id=${id}&type=${action}`
+                });
+
+                const data = await response.json();
+
+                if (data.likes !== undefined && data.dislikes !== undefined) {
+                    likeCount.textContent = data.likes;
+                    dislikeCount.textContent = data.dislikes;
+
+                    // Обновляем состояние кнопок
+                    likeBtn.classList.remove('btn-success', 'btn-outline-success');
+                    dislikeBtn.classList.remove('btn-danger', 'btn-outline-danger');
+
+                    if (data.user_vote === 'like') {
+                        likeBtn.classList.add('btn-success');
+                        dislikeBtn.classList.add('btn-outline-danger');
+                    } else if (data.user_vote === 'dislike') {
+                        likeBtn.classList.add('btn-outline-success');
+                        dislikeBtn.classList.add('btn-danger');
+                    } else {
+                        likeBtn.classList.add('btn-outline-success');
+                        dislikeBtn.classList.add('btn-outline-danger');
+                    }
+                }
+            } catch (error) {
+                console.error('Vote error:', error);
+            } finally {
+                isProcessing = false;
             }
+        }
+
+        // Обработчики с debounce и блокировкой
+        likeBtn.addEventListener('click', function(e) {
+            e.stopImmediatePropagation();
+            clearTimeout(likeTimer);
+            likeTimer = setTimeout(() => processVote('like'), 200);
+        });
+
+        dislikeBtn.addEventListener('click', function(e) {
+            e.stopImmediatePropagation();
+            clearTimeout(dislikeTimer);
+            dislikeTimer = setTimeout(() => processVote('dislike'), 200);
+        });
+
+        // Запрещаем двойные клики
+        likeBtn.addEventListener('dblclick', function(e) {
+            e.preventDefault();
+        });
+
+        dislikeBtn.addEventListener('dblclick', function(e) {
+            e.preventDefault();
         });
     }
 
+    // Настройка для вопросов
+    document.querySelectorAll('.card[id^="question-"]').forEach(card => {
+        setupVoteHandlers(card, 'like-question');
+    });
+
+    // Настройка для ответов
+    document.querySelectorAll('.card[id^="answer-"]').forEach(card => {
+        setupVoteHandlers(card, 'like-answer');
+    });
+
+    // Функция получения куки
     function getCookie(name) {
-        const cookieValue = document.cookie
-            .split('; ')
-            .find(row => row.startsWith(name + '='))
-            ?.split('=')[1];
-        return cookieValue;
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
     }
 });
 </script>

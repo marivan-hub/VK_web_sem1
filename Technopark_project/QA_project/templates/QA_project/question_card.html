@@ -1,11 +1,6 @@
 {% load static %}
-{% if detailed %}
+
 <div id="question-{{ question.id }}" class="card mb-4">
-    <div class="card-body">
-        <div class="row">
-            <div class="col d-flex flex-column justify-content-between">
-{% endif %}
-<div class="card">
     <h5 class="card-header">
         {% if question.is_solved %}
             Problem solved
@@ -23,10 +18,16 @@
                 <div style="height: 100px;" class="border mb-2 w-100">
                     <img src="{% static 'resources/pictures/question.png' %}" alt="Question" class="img-fluid">
                 </div>
-                  <div class="like-dislike-buttons">
-                      <button class="btn btn-outline-success like-btn">👍 <span class="count">{{ question.likes_count }}</span></button>
-                      <button class="btn btn-outline-danger dislike-btn">👎 <span class="count">{{ question.dislikes_count }}</span></button>
-                  </div>
+                <div class="like-dislike-buttons text-center">
+                    <button class="btn {% if user_vote == 'like' %}btn-success{% else %}btn-outline-success{% endif %} like-btn"
+                            data-id="{{ question.id }}">
+                        👍 <span class="count">{{ question.likes }}</span>
+                    </button>
+                    <button class="btn {% if user_vote == 'dislike' %}btn-danger{% else %}btn-outline-danger{% endif %} dislike-btn"
+                            data-id="{{ question.id }}">
+                        👎 <span class="count">{{ question.dislikes }}</span>
+                    </button>
+                </div>
             </div>
             <div class="col d-flex flex-column justify-content-between">
                 <div>
@@ -35,85 +36,129 @@
                     </a>
                     <p class="card-text">{{ question.text|truncatewords:30 }}</p>
                 </div>
-            </div>
-        </div>
-    </div>
-    <div class="card-footer">
-        <div class="row">
-            <div class="col">
-                <a href="{% url 'question' question.id %}">Answers ({{ question.answers_count }})</a>
-            </div>
-            <div class="col">
-                <span>Tags:</span>
-                {% for tag in question.tags.all %}
-                    <a href="{% url 'tag' tag.name %}" class="badge rounded-pill text-bg-primary">{{ tag.name }}</a>
-                {% empty %}
-                    <span class="text-muted">No tags</span>
-                {% endfor %}
-            </div>
-        </div>
-    </div>
-</div>
-{% if detailed %}
+                <div class="card-footer">
+                    <div class="row">
+                        <div class="col">
+                            <a href="{% url 'question' question.id %}">Answers ({{ question.answers_count }})</a>
+                        </div>
+                        <div class="col">
+                            <span>Tags:</span>
+                            {% for tag in question.tags.all %}
+                                <a href="{% url 'tag' tag.name %}" class="badge rounded-pill text-bg-primary">{{ tag.name }}</a>
+                            {% empty %}
+                                <span class="text-muted">No tags</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
-{% endif %}
-
 
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-    console.log("Question like script loaded");
+document.addEventListener('DOMContentLoaded', function() {
+    // Общая функция для обработки голосов
+    function setupVoteHandlers(card, likeEndpoint) {
+        const likeBtn = card.querySelector('.like-btn');
+        const dislikeBtn = card.querySelector('.dislike-btn');
+        const likeCount = likeBtn.querySelector('.count');
+        const dislikeCount = dislikeBtn.querySelector('.count');
 
-    const card = document.getElementById('question-{{ question.id }}');
-    if (!card) {
-        console.error("Card question not found");
-        return;
-    }
-    const questionId = '{{ question.id }}';
-    const likeBtn = card.querySelector('.like-btn');
-    const dislikeBtn = card.querySelector('.dislike-btn');
-    const likeCount = likeBtn.querySelector('.count');
-    const dislikeCount = dislikeBtn.querySelector('.count');
+        // Таймеры для debounce
+        let likeTimer = null;
+        let dislikeTimer = null;
 
-    likeBtn.addEventListener('click', function () {
-        sendLikeDislike('like');
-    });
-    dislikeBtn.addEventListener('click', function () {
-        sendLikeDislike('dislike');
-    });
+        // Флаг для блокировки повторных кликов
+        let isProcessing = false;
 
-    function sendLikeDislike(type) {
-        fetch('/like-question/', {
-            method: 'POST',
-            headers: {
-                'X-CSRFToken': getCookie('csrftoken'),
-                'Content-Type': 'application/x-www-form-urlencoded'
-            },
-            body: `id=${questionId}&type=${type}`
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.likes !== undefined && data.dislikes !== undefined) {
-                likeCount.textContent = data.likes;
-                dislikeCount.textContent = data.dislikes;
-            } else {
-                alert(data.error || 'Ошибка при отправке лайка/дизлайка');
+        // Общая функция обработки голоса
+        async function processVote(voteType) {
+            if (isProcessing) return;
+
+            isProcessing = true;
+
+            const id = card.id.split('-')[1];
+            const btn = voteType === 'like' ? likeBtn : dislikeBtn;
+            const currentVote = btn.classList.contains(voteType === 'like' ? 'btn-success' : 'btn-danger');
+            const action = currentVote ? 'remove' : voteType;
+
+            try {
+                const response = await fetch(`/${likeEndpoint}/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': getCookie('csrftoken'),
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: `id=${id}&type=${action}`
+                });
+
+                const data = await response.json();
+
+                if (data.likes !== undefined && data.dislikes !== undefined) {
+                    likeCount.textContent = data.likes;
+                    dislikeCount.textContent = data.dislikes;
+
+                    // Обновляем состояние кнопок
+                    likeBtn.classList.remove('btn-success', 'btn-outline-success');
+                    dislikeBtn.classList.remove('btn-danger', 'btn-outline-danger');
+
+                    if (data.user_vote === 'like') {
+                        likeBtn.classList.add('btn-success');
+                        dislikeBtn.classList.add('btn-outline-danger');
+                    } else if (data.user_vote === 'dislike') {
+                        likeBtn.classList.add('btn-outline-success');
+                        dislikeBtn.classList.add('btn-danger');
+                    } else {
+                        likeBtn.classList.add('btn-outline-success');
+                        dislikeBtn.classList.add('btn-outline-danger');
+                    }
+                }
+            } catch (error) {
+                console.error('Vote error:', error);
+            } finally {
+                isProcessing = false;
             }
-        }).catch(error => {
-            console.error('Fetch error:', error);
+        }
+
+        // Обработчики с debounce и блокировкой
+        likeBtn.addEventListener('click', function(e) {
+            e.stopImmediatePropagation();
+            clearTimeout(likeTimer);
+            likeTimer = setTimeout(() => processVote('like'), 200);
+        });
+
+        dislikeBtn.addEventListener('click', function(e) {
+            e.stopImmediatePropagation();
+            clearTimeout(dislikeTimer);
+            dislikeTimer = setTimeout(() => processVote('dislike'), 200);
+        });
+
+        // Запрещаем двойные клики
+        likeBtn.addEventListener('dblclick', function(e) {
+            e.preventDefault();
+        });
+
+        dislikeBtn.addEventListener('dblclick', function(e) {
+            e.preventDefault();
         });
     }
 
+    // Настройка для вопросов
+    document.querySelectorAll('.card[id^="question-"]').forEach(card => {
+        setupVoteHandlers(card, 'like-question');
+    });
+
+    // Настройка для ответов
+    document.querySelectorAll('.card[id^="answer-"]').forEach(card => {
+        setupVoteHandlers(card, 'like-answer');
+    });
+
+    // Функция получения куки
     function getCookie(name) {
-        const cookies = document.cookie.split('; ');
-        for (let cookie of cookies) {
-            if (cookie.startsWith(name + '=')) {
-                return cookie.split('=')[1];
-            }
-        }
-        return null;
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
     }
 });
 </script>
