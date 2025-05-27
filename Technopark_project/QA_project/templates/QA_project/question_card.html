@@ -1,6 +1,6 @@
 {% load static %}
 {% if detailed %}
-<div class="card mb-4">
+<div id="question-{{ question.id }}" class="card mb-4">
     <div class="card-body">
         <div class="row">
             <div class="col d-flex flex-column justify-content-between">
@@ -23,10 +23,10 @@
                 <div style="height: 100px;" class="border mb-2 w-100">
                     <img src="{% static 'resources/pictures/question.png' %}" alt="Question" class="img-fluid">
                 </div>
-                <div class="like-dislike-buttons">
-                    <button class="btn btn-outline-success like-btn">👍 <span class="count">{{ question.rating }}</span></button>
-                    <button class="btn btn-outline-danger dislike-btn">👎 <span class="count">{{ question.dislikes }}</span></button>
-                </div>
+                  <div class="like-dislike-buttons">
+                      <button class="btn btn-outline-success like-btn">👍 <span class="count">{{ question.likes_count }}</span></button>
+                      <button class="btn btn-outline-danger dislike-btn">👎 <span class="count">{{ question.dislikes_count }}</span></button>
+                  </div>
             </div>
             <div class="col d-flex flex-column justify-content-between">
                 <div>
@@ -60,3 +60,60 @@
     </div>
 </div>
 {% endif %}
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    console.log("Question like script loaded");
+
+    const card = document.getElementById('question-{{ question.id }}');
+    if (!card) {
+        console.error("Card question not found");
+        return;
+    }
+    const questionId = '{{ question.id }}';
+    const likeBtn = card.querySelector('.like-btn');
+    const dislikeBtn = card.querySelector('.dislike-btn');
+    const likeCount = likeBtn.querySelector('.count');
+    const dislikeCount = dislikeBtn.querySelector('.count');
+
+    likeBtn.addEventListener('click', function () {
+        sendLikeDislike('like');
+    });
+    dislikeBtn.addEventListener('click', function () {
+        sendLikeDislike('dislike');
+    });
+
+    function sendLikeDislike(type) {
+        fetch('/like-question/', {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: `id=${questionId}&type=${type}`
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.likes !== undefined && data.dislikes !== undefined) {
+                likeCount.textContent = data.likes;
+                dislikeCount.textContent = data.dislikes;
+            } else {
+                alert(data.error || 'Ошибка при отправке лайка/дизлайка');
+            }
+        }).catch(error => {
+            console.error('Fetch error:', error);
+        });
+    }
+
+    function getCookie(name) {
+        const cookies = document.cookie.split('; ');
+        for (let cookie of cookies) {
+            if (cookie.startsWith(name + '=')) {
+                return cookie.split('=')[1];
+            }
+        }
+        return null;
+    }
+});
+</script>

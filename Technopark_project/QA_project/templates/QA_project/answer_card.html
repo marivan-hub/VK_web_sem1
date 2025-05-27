@@ -10,8 +10,14 @@
                          alt="avatar" class="img-fluid h-100" style="object-fit: cover;">
                 </div>
                 <div class="like-dislike-buttons">
-                    <button class="btn btn-outline-success like-btn">👍 <span class="count">{{ answer.likes }}</span></button>
-                    <button class="btn btn-outline-danger dislike-btn">👎 <span class="count">{{ answer.dislikes }}</span></button>
+                    <button class="btn btn-outline-success like-btn"
+                            data-type="answer" data-id="{{ answer.id }}">
+                        👍 <span class="count">{{ answer.rating }}</span>
+                    </button>
+                    <button class="btn btn-outline-danger dislike-btn"
+                            data-type="answer" data-id="{{ answer.id }}">
+                        👎
+                    </button>
                 </div>
             </div>
             <div class="col d-flex flex-column justify-content-between">
@@ -48,3 +54,51 @@
     </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('[id^="answer-"]').forEach(card => {
+        const answerId = card.id.split('-')[1];
+        const likeBtn = card.querySelector('.like-btn');
+        const dislikeBtn = card.querySelector('.dislike-btn');
+        const likeCount = likeBtn.querySelector('.count');
+        const dislikeCount = dislikeBtn.querySelector('.count');
+
+        likeBtn.addEventListener('click', function () {
+            sendAnswerLike(answerId, 'like', likeCount, dislikeCount);
+        });
+
+        dislikeBtn.addEventListener('click', function () {
+            sendAnswerLike(answerId, 'dislike', likeCount, dislikeCount);
+        });
+    });
+
+    function sendAnswerLike(id, type, likeSpan, dislikeSpan) {
+        fetch('/like-answer/', {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: `id=${id}&type=${type}`
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.likes !== undefined && data.dislikes !== undefined) {
+                likeSpan.textContent = data.likes;
+                dislikeSpan.textContent = data.dislikes;
+            } else {
+                alert(data.error || 'Ошибка при отправке лайка/дизлайка');
+            }
+        });
+    }
+
+    function getCookie(name) {
+        const cookieValue = document.cookie
+            .split('; ')
+            .find(row => row.startsWith(name + '='))
+            ?.split('=')[1];
+        return cookieValue;
+    }
+});
+</script>

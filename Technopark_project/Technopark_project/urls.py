@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.urls import path
-from QA_project.views import index, login_view, ask, signup, question, settings, tag, hot, logout_view
+from QA_project.views import (index, login_view, ask, signup, question, settings, tag, hot, logout_view, like_question,
+                              like_answer, mark_correct_answer)
 urlpatterns = [
     path('admin/', admin.site.urls),
 
@@ -14,6 +15,9 @@ urlpatterns = [
     path('signup/', signup, name='signup'), # форма регистрации
     path('ask/', ask, name='ask'), # форма создания вопроса
     path('logout/', logout_view, name='logout'),
+    path('like-question/', like_question, name='like-question'),
+    path('like-answer/', like_answer, name='like-answer'),
+    path('mark-correct/', mark_correct_answer, name='mark-correct'),
 
 ]
 
