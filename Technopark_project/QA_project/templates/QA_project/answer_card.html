@@ -1,6 +1,7 @@
 {% load static %}
 
 <div class="card mb-3 {% if answer.is_correct %}border-success{% endif %}">
+    <div id="answer-{{ answer.id }}" class="card mb-3 {% if answer.is_correct %}border-success{% endif %}">
     <div class="card-body">
         <div class="row">
             <div class="col-2 text-center">
@@ -44,5 +45,6 @@
                 </div>
             </div>
         </div>
+    </div>
     </div>
 </div>

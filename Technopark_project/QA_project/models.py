@@ -12,11 +12,11 @@ class ProfileManager(models.Manager):
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     nickname = models.CharField(null=True, default=None)
-    avatar = models.ImageField(upload_to='../static/resources/pictures', null=True, blank=True)
+    avatar = models.ImageField(upload_to='avatars/', null=True, blank=True, default='avatars/default_avatar.jpeg')
     rating = models.IntegerField(default=0)
     user_email = models.EmailField(null=True, default=None)
 
-    objects = ProfileManager()  # Добавьте эту строку
+    objects = ProfileManager()
 
     @property
     def name(self):
@@ -24,6 +24,8 @@ class Profile(models.Model):
 
     def __str__(self):
         return self.name
+
+
 class TagManager(models.Manager):
     def popular_tags(self):
         return self.annotate(
@@ -43,7 +45,6 @@ class Tag(models.Model):
 class QuestionManager(models.Manager):
     def new(self):
         return self.order_by('-created_at')
-        # return self.order_by('-pk')
 
     def hot(self):
         return self.order_by('-rating')
@@ -57,7 +58,7 @@ class Question(models.Model):
     author = models.ForeignKey(Profile, on_delete=models.CASCADE)
     tags = models.ManyToManyField(Tag)
     created_at = models.DateTimeField(auto_now_add=True)
-    edited_at = models.DateTimeField(default=None)
+    edited_at = models.DateTimeField(null=True, blank=True, default=None)
     rating = models.IntegerField(default=0)
     answers_count = models.IntegerField(default=0)
     is_closed = models.BooleanField(default=False)
@@ -82,7 +83,7 @@ class Answer(models.Model):
     question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name='answers')
     author = models.ForeignKey(Profile, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
-    edited_at = models.DateTimeField(default=None)
+    edited_at = models.DateTimeField(null=True, blank=True, default=None)
     rating = models.IntegerField(default=0)
     is_correct = models.BooleanField(default=False)
 

@@ -25,9 +25,7 @@
         <div class="card-body">
             <form method="post">
                 {% csrf_token %}
-                <div class="form-group mb-3">
-                    <textarea class="form-control" name="text" rows="5" required></textarea>
-                </div>
+                {{ form.as_p }}
                 <button type="submit" class="btn btn-primary">Post Answer</button>
             </form>
         </div>

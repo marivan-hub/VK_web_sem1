@@ -1,0 +1,20 @@
+{% load static %}
+
+<nav class="navbar navbar-expand-lg navbar-light" style="background-color: #d9abdb;">
+    <div class="container">
+        <a class="navbar-brand" href="/">
+            <img src="{% static 'resources/pictures/icon.jpeg' %}" alt="icon" width="30" height="24" class="d-inline-block align-text-top">
+            Questioneer
+        </a>
+
+        <form class="d-flex" role="search" method="get" action="#">
+            <input class="form-control me-2" type="search" name="q" placeholder="Enter keywords" aria-label="Search">
+            <button class="btn btn-outline-success" type="submit">Search</button>
+        </form>
+
+        <div class="d-flex gap-2 align-items-center">
+            <a href="{% url 'login' %}?continue={{ request.get_full_path|urlencode }}" class="btn btn-outline-success">Login</a>
+            <a href="{% url 'signup' %}" class="btn btn-outline-success">Signup</a>
+        </div>
+    </div>
+</nav>
