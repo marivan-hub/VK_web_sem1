@@ -11,6 +11,25 @@ from .models import Question, Tag, Profile, Answer, AnswerLike, QuestionLike
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.urls import reverse
 from django.db import models, transaction
+from django.contrib.postgres.search import TrigramSimilarity
+from django.db.models.functions import Greatest
+
+
+def search(request):
+    query = request.GET.get('q', '')
+    results = []
+    if query:
+        results = Question.objects.annotate(
+            similarity=Greatest(
+                TrigramSimilarity('title', query),
+                TrigramSimilarity('text', query)
+            )
+        ).filter(similarity__gt=0.3).order_by('-similarity')[:5]
+    return JsonResponse({'results': [
+        {'title': q.title, 'url': q.get_absolute_url()}
+        for q in results
+    ]})
+
 
 
 @require_POST

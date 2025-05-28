@@ -1,0 +1,284 @@
+root@marivan-IdeaPad-5-14ALC05:/etc/nginx/sites-available#
+# 1. Статика через Nginx
+ab -n 1000 -c 100 http://localhost/sample.html
+
+# 2. Статика через Gunicorn
+ab -n 1000 -c 100 http://localhost:8000/static/sample.html
+
+# 3. Динамика через Gunicorn
+ab -n 1000 -c 100 http://localhost:8000/
+
+# 4. Динамика через Nginx прокси
+ab -n 1000 -c 100 http://localhost/
+
+# 5. Динамика с кэшированием
+ab -n 1000 -c 100 http://localhost/
+This is ApacheBench, Version 2.3 <$Revision: 1879490 $>
+Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/
+Licensed to The Apache Software Foundation, http://www.apache.org/
+
+Benchmarking localhost (be patient)
+Completed 100 requests
+Completed 200 requests
+Completed 300 requests
+Completed 400 requests
+Completed 500 requests
+Completed 600 requests
+Completed 700 requests
+Completed 800 requests
+Completed 900 requests
+Completed 1000 requests
+Finished 1000 requests
+
+
+Server Software:        nginx/1.18.0
+Server Hostname:        localhost
+Server Port:            80
+
+Document Path:          /sample.html
+Document Length:        3759 bytes
+
+Concurrency Level:      100
+Time taken for tests:   0.086 seconds
+Complete requests:      1000
+Failed requests:        0
+Non-2xx responses:      1000
+Total transferred:      4061000 bytes
+HTML transferred:       3759000 bytes
+Requests per second:    11627.91 [#/sec] (mean)
+Time per request:       8.600 [ms] (mean)
+Time per request:       0.086 [ms] (mean, across all concurrent requests)
+Transfer rate:          46114.19 [Kbytes/sec] received
+
+Connection Times (ms)
+              min  mean[+/-sd] median   max
+Connect:        0    3   0.6      3       4
+Processing:     1    4   1.1      4      20
+Waiting:        1    3   0.9      3      16
+Total:          4    7   0.9      7      20
+
+Percentage of the requests served within a certain time (ms)
+  50%      7
+  66%      7
+  75%      7
+  80%      7
+  90%      7
+  95%      8
+  98%      9
+  99%      9
+ 100%     20 (longest request)
+This is ApacheBench, Version 2.3 <$Revision: 1879490 $>
+Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/
+Licensed to The Apache Software Foundation, http://www.apache.org/
+
+Benchmarking localhost (be patient)
+Completed 100 requests
+Completed 200 requests
+Completed 300 requests
+Completed 400 requests
+Completed 500 requests
+Completed 600 requests
+Completed 700 requests
+Completed 800 requests
+Completed 900 requests
+Completed 1000 requests
+Finished 1000 requests
+
+
+Server Software:        WSGIServer/0.2
+Server Hostname:        localhost
+Server Port:            8000
+
+Document Path:          /static/sample.html
+Document Length:        1792 bytes
+
+Concurrency Level:      100
+Time taken for tests:   9.745 seconds
+Complete requests:      1000
+Failed requests:        0
+Non-2xx responses:      1000
+Total transferred:      1953000 bytes
+HTML transferred:       1792000 bytes
+Requests per second:    102.62 [#/sec] (mean)
+Time per request:       974.476 [ms] (mean)
+Time per request:       9.745 [ms] (mean, across all concurrent requests)
+Transfer rate:          195.72 [Kbytes/sec] received
+
+Connection Times (ms)
+              min  mean[+/-sd] median   max
+Connect:        0    0   0.8      0       4
+Processing:    11  650 1237.7    153    9733
+Waiting:        7  637 1238.7    139    9732
+Total:         11  650 1238.1    153    9735
+
+Percentage of the requests served within a certain time (ms)
+  50%    153
+  66%    173
+  75%    215
+  80%   1134
+  90%   2078
+  95%   2678
+  98%   4981
+  99%   6560
+ 100%   9735 (longest request)
+This is ApacheBench, Version 2.3 <$Revision: 1879490 $>
+Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/
+Licensed to The Apache Software Foundation, http://www.apache.org/
+
+Benchmarking localhost (be patient)
+Completed 100 requests
+Completed 200 requests
+Completed 300 requests
+Completed 400 requests
+Completed 500 requests
+Completed 600 requests
+Completed 700 requests
+Completed 800 requests
+Completed 900 requests
+Completed 1000 requests
+Finished 1000 requests
+
+
+Server Software:        WSGIServer/0.2
+Server Hostname:        localhost
+Server Port:            8000
+
+Document Path:          /
+Document Length:        289457 bytes
+
+Concurrency Level:      100
+Time taken for tests:   244.017 seconds
+Complete requests:      1000
+Failed requests:        251
+   (Connect: 0, Receive: 0, Length: 251, Exceptions: 0)
+Non-2xx responses:      251
+Total transferred:      264103993 bytes
+HTML transferred:       263799224 bytes
+Requests per second:    4.10 [#/sec] (mean)
+Time per request:       24401.701 [ms] (mean)
+Time per request:       244.017 [ms] (mean, across all concurrent requests)
+Transfer rate:          1056.95 [Kbytes/sec] received
+
+Connection Times (ms)
+              min  mean[+/-sd] median   max
+Connect:        0    0   1.0      0       5
+Processing:   198 23407 14408.6  30374   86344
+Waiting:      192 23376 14420.4  30365   86341
+Total:        199 23408 14408.6  30374   86347
+
+Percentage of the requests served within a certain time (ms)
+  50%  30374
+  66%  32486
+  75%  33034
+  80%  33379
+  90%  35254
+  95%  36478
+  98%  40795
+  99%  56029
+ 100%  86347 (longest request)
+This is ApacheBench, Version 2.3 <$Revision: 1879490 $>
+Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/
+Licensed to The Apache Software Foundation, http://www.apache.org/
+
+Benchmarking localhost (be patient)
+Completed 100 requests
+Completed 200 requests
+Completed 300 requests
+Completed 400 requests
+Completed 500 requests
+Completed 600 requests
+Completed 700 requests
+Completed 800 requests
+Completed 900 requests
+Completed 1000 requests
+Finished 1000 requests
+
+
+Server Software:        nginx/1.18.0
+Server Hostname:        localhost
+Server Port:            80
+
+Document Path:          /
+Document Length:        289457 bytes
+
+Concurrency Level:      100
+Time taken for tests:   0.580 seconds
+Complete requests:      1000
+Failed requests:        0
+Total transferred:      289768000 bytes
+HTML transferred:       289457000 bytes
+Requests per second:    1723.75 [#/sec] (mean)
+Time per request:       58.013 [ms] (mean)
+Time per request:       0.580 [ms] (mean, across all concurrent requests)
+Transfer rate:          487781.29 [Kbytes/sec] received
+
+Connection Times (ms)
+              min  mean[+/-sd] median   max
+Connect:        0    1   0.5      1       3
+Processing:     8   17  12.5     17     405
+Waiting:        0    2  12.4      1     394
+Total:          9   19  12.4     18     405
+
+Percentage of the requests served within a certain time (ms)
+  50%     18
+  66%     20
+  75%     20
+  80%     20
+  90%     21
+  95%     21
+  98%     21
+  99%     22
+ 100%    405 (longest request)
+This is ApacheBench, Version 2.3 <$Revision: 1879490 $>
+Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/
+Licensed to The Apache Software Foundation, http://www.apache.org/
+
+Benchmarking localhost (be patient)
+Completed 100 requests
+Completed 200 requests
+Completed 300 requests
+Completed 400 requests
+Completed 500 requests
+Completed 600 requests
+Completed 700 requests
+Completed 800 requests
+Completed 900 requests
+Completed 1000 requests
+Finished 1000 requests
+
+
+Server Software:        nginx/1.18.0
+Server Hostname:        localhost
+Server Port:            80
+
+Document Path:          /
+Document Length:        289457 bytes
+
+Concurrency Level:      100
+Time taken for tests:   0.189 seconds
+Complete requests:      1000
+Failed requests:        0
+Total transferred:      289768000 bytes
+HTML transferred:       289457000 bytes
+Requests per second:    5293.13 [#/sec] (mean)
+Time per request:       18.892 [ms] (mean)
+Time per request:       0.189 [ms] (mean, across all concurrent requests)
+Transfer rate:          1497832.79 [Kbytes/sec] received
+
+Connection Times (ms)
+              min  mean[+/-sd] median   max
+Connect:        0    1   0.5      1       3
+Processing:     8   17   2.6     18      22
+Waiting:        0    1   0.8      1       6
+Total:          9   18   2.4     18      23
+
+Percentage of the requests served within a certain time (ms)
+  50%     18
+  66%     19
+  75%     20
+  80%     21
+  90%     21
+  95%     22
+  98%     22
+  99%     22
+ 100%     23 (longest request)

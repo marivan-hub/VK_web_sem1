@@ -14,7 +14,7 @@ django-crontab~=0.7.1
 psycopg2
 Pillow
 faker
-
+cent
 
 
 

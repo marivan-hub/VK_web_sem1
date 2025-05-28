@@ -131,3 +131,7 @@ STATICFILES_DIRS = [
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+CENTRIFUGO_API_KEY = "your_api_key"
+CENTRIFUGO_URL = "http://localhost:8001"
+CENTRIFUGO_SECRET = "your_secret_key"

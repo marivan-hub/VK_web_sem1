@@ -2,6 +2,7 @@ from django.contrib.auth.models import User
 from .models import Profile, Question, Answer, Tag
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from cent import Client
 
 class AskForm(forms.ModelForm):
     tags = forms.CharField(help_text="Enter tags separated by commas")
@@ -83,3 +84,24 @@ class ProfileEditForm(forms.ModelForm):
         if commit:
             profile.save()
         return profile
+
+
+
+
+
+def save_answer(request, question_id):
+    if request.method == 'POST':
+        form = AnswerForm(request.POST)
+        if form.is_valid():
+            answer = form.save()
+
+            # Отправка в Centrifugo
+            client = Client(
+                settings.CENTRIFUGO_URL,
+                api_key=settings.CENTRIFUGO_API_KEY,
+                timeout=1
+            )
+            client.publish(
+                f"question_{question_id}",
+                {"text": answer.text, "author": answer.author.username}
+            )

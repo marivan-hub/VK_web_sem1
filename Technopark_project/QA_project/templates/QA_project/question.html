@@ -31,3 +31,18 @@
         </div>
     </div>
 {% endblock %}
+
+<script src="{% static 'centrifugo.js' %}"></script>
+<script>
+const cent = new Centrifuge('ws://localhost:8001/connection/websocket', {
+    token: "{{ centrifugo_token }}"
+});
+
+cent.subscribe("question_{{ question.id }}", function(message) {
+    // Добавляем новый ответ в DOM
+    const answers = document.getElementById('answers');
+    answers.innerHTML += `<div class="answer">${message.data.text}</div>`;
+});
+
+cent.connect();
+</script>
